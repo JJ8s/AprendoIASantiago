@@ -13,6 +13,8 @@
     <string name="login_clave">Contraseña</string>
     <string name="login_ingresar">Ingresar</string>
     <string name="login_ingresando">Ingresando…</string>
+    <string name="login_mostrar_clave">Mostrar contraseña</string>
+    <string name="login_ocultar_clave">Ocultar contraseña</string>
     <string name="login_pista">Usuario de prueba: %1$s / %2$s</string>
     <string name="error_usuario_vacio">Escribe tu usuario.</string>
     <string name="error_clave_vacia">Escribe tu contraseña.</string>
@@ -20,8 +22,8 @@
     <string name="error_inesperado">Ocurrió un error inesperado. Intenta de nuevo.</string>
 
     <!-- Mapa -->
-    <string name="mapa_titulo">Puntos turísticos</string>
-    <string name="mapa_aviso">El mapa interactivo (OpenStreetMap) se agregará en la siguiente etapa. Por ahora se listan los puntos guardados en la base de datos local.</string>
+    <string name="mapa_mi_ubicacion">Centrar el mapa en mi ubicación</string>
+    <string name="mapa_buscando_ubicacion">Buscando tu ubicación…</string>
     <string name="mapa_coordenadas">Lat %1$.5f · Lon %2$.5f · Alt %3$.0f m</string>
 
     <!-- Escáner -->

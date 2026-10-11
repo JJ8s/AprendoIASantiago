@@ -59,6 +59,9 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
 
+    // Mapa interactivo gratuito (OpenStreetMap, sin API key)
+    implementation(libs.osmdroid.android)
+
     // Tests
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
