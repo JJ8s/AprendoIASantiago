@@ -1,0 +1,41 @@
+<resources>
+    <string name="app_name">AprendoIA Santiago</string>
+
+    <!-- Navegación -->
+    <string name="destino_mapa">Mapa</string>
+    <string name="destino_escaner">Escanear QR</string>
+    <string name="destino_perfil">Perfil</string>
+
+    <!-- Login -->
+    <string name="login_titulo">Aprendo IA Jugando en Santiago</string>
+    <string name="login_subtitulo">Inicia sesión para comenzar</string>
+    <string name="login_usuario">Usuario</string>
+    <string name="login_clave">Contraseña</string>
+    <string name="login_ingresar">Ingresar</string>
+    <string name="login_ingresando">Ingresando…</string>
+    <string name="login_pista">Usuario de prueba: %1$s / %2$s</string>
+    <string name="error_usuario_vacio">Escribe tu usuario.</string>
+    <string name="error_clave_vacia">Escribe tu contraseña.</string>
+    <string name="error_credenciales">Usuario o contraseña incorrectos.</string>
+    <string name="error_inesperado">Ocurrió un error inesperado. Intenta de nuevo.</string>
+
+    <!-- Mapa -->
+    <string name="mapa_titulo">Puntos turísticos</string>
+    <string name="mapa_aviso">El mapa interactivo (OpenStreetMap) se agregará en la siguiente etapa. Por ahora se listan los puntos guardados en la base de datos local.</string>
+    <string name="mapa_coordenadas">Lat %1$.5f · Lon %2$.5f · Alt %3$.0f m</string>
+
+    <!-- Escáner -->
+    <string name="escaner_titulo">Escanear QR</string>
+    <string name="escaner_aviso">La cámara se agregará en la siguiente etapa. Códigos QR de prueba disponibles:</string>
+    <string name="escaner_capsula">%1$s · %2$d pts</string>
+
+    <!-- Perfil -->
+    <string name="perfil_titulo">Perfil</string>
+    <string name="perfil_puntaje">Puntaje: %1$d</string>
+    <string name="perfil_progreso">Cápsulas completadas: %1$d de %2$d</string>
+    <string name="perfil_ranking">Ranking</string>
+    <string name="perfil_posicion">%1$d. %2$s</string>
+    <string name="perfil_tu">(tú)</string>
+    <string name="puntos_formato">%1$d pts</string>
+    <string name="perfil_cerrar_sesion">Cerrar sesión</string>
+</resources>
