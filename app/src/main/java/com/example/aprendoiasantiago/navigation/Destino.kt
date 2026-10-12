@@ -11,6 +11,12 @@ import com.example.aprendoiasantiago.R
 /** Ruta de la pantalla de login (no aparece en la barra inferior). */
 const val RUTA_LOGIN = "login"
 
+/** Pantalla de una cápsula (se abre desde el escáner; no es una pestaña). */
+const val ARG_CAPSULA_ID = "capsulaId"
+const val RUTA_CAPSULA = "capsula/{$ARG_CAPSULA_ID}"
+
+fun rutaCapsula(capsulaId: Long): String = "capsula/$capsulaId"
+
 /** Pestañas de la barra inferior: cada una reúne su ruta, su título y su ícono en un solo lugar. */
 enum class Destino(
     val ruta: String,

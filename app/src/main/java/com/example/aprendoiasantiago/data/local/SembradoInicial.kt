@@ -1,15 +1,17 @@
 package com.example.aprendoiasantiago.data.local
 
 /**
- * Llena la base la primera vez que se abre la app.
- * Los usuarios se insertan al final: su presencia marca que el sembrado terminó.
- * Todos los registros llevan id fijo y se insertan con REPLACE, así que repetirlo es seguro.
+ * Prepara la base en cada inicio de la app:
+ * - Puntos y cápsulas (contenido fijo): se actualizan siempre con @Upsert. Así, si cambias los datos
+ *   de ejemplo, la app los toma sin tener que desinstalarla, y el progreso del usuario no se pierde.
+ * - Usuarios: solo se crean la primera vez, para no reiniciar los puntajes ya ganados.
  */
 class SembradoInicial(private val db: AppDatabase) {
-    suspend fun ejecutarSiVacio() {
-        if (db.usuarioDao().contar() > 0) return
-        db.puntoDao().insertarTodos(DatosEjemplo.puntos)
-        db.capsulaDao().insertarTodas(DatosEjemplo.capsulas)
-        db.usuarioDao().insertarTodos(DatosEjemplo.usuarios)
+    suspend fun ejecutar() {
+        db.puntoDao().guardarTodos(DatosEjemplo.puntos)
+        db.capsulaDao().guardarTodas(DatosEjemplo.capsulas)
+        if (db.usuarioDao().contar() == 0) {
+            db.usuarioDao().insertarTodos(DatosEjemplo.usuarios)
+        }
     }
 }

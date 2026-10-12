@@ -37,6 +37,7 @@ import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.CopyrightOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
@@ -45,6 +46,15 @@ import java.io.File
 private val CENTRO_SANTIAGO = GeoPoint(-33.4372, -70.6506)
 private const val ZOOM_INICIAL = 14.0
 private const val ZOOM_AL_CENTRAR = 17.0
+
+// Política de OpenStreetMap: el User-Agent debe nombrar la app de forma única y estable.
+// No uses el nombre del paquete (com.example...) ni el valor por defecto de la librería: los bloquean.
+// Opcional y recomendado: agrega al final un contacto tuyo, por ejemplo "(https://tu-sitio o correo)".
+private const val USER_AGENT = "AprendoIASantiago/1.0 (proyecto academico MVP)"
+
+// Si cambias el User-Agent o te bloquean de nuevo, cambia este nombre para empezar con una caché limpia
+// (la caché guarda hasta la imagen de "Access blocked" que respondió el servidor).
+private const val CARPETA_CACHE = "osmdroid_v2"
 
 private val PERMISOS_UBICACION = arrayOf(
     Manifest.permission.ACCESS_FINE_LOCATION,
@@ -152,17 +162,27 @@ private fun tienePermisoUbicacion(contexto: Context): Boolean =
 private fun crearMapView(contexto: Context): MapView {
     val config = Configuration.getInstance()
     // Los servidores de OpenStreetMap exigen identificar la app; sin esto bloquean las teselas.
-    config.userAgentValue = contexto.packageName
+    config.userAgentValue = USER_AGENT
     // Caché de teselas en el almacenamiento interno de la app (no requiere permisos de archivos).
-    val base = File(contexto.cacheDir, "osmdroid")
+    val base = File(contexto.cacheDir, CARPETA_CACHE)
     config.osmdroidBasePath = base
     config.osmdroidTileCache = File(base, "tiles")
 
     return MapView(contexto).apply {
         setTileSource(TileSourceFactory.MAPNIK)
         setMultiTouchControls(true)
+        // Teselas más grandes en pantallas de alta densidad: se leen mejor al aire libre.
+        setTilesScaledToDpi(true)
         controller.setZoom(ZOOM_INICIAL)
         controller.setCenter(CENTRO_SANTIAGO)
+        // Atribución obligatoria: muestra "© OpenStreetMap contributors" sobre el mapa.
+        // Va abajo a la izquierda para que el botón flotante (abajo a la derecha) no la tape.
+        overlays.add(
+            CopyrightOverlay(contexto).apply {
+                setAlignBottom(true)
+                setAlignRight(false)
+            }
+        )
     }
 }
 

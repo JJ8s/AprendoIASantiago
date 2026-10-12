@@ -62,6 +62,17 @@ dependencies {
     // Mapa interactivo gratuito (OpenStreetMap, sin API key)
     implementation(libs.osmdroid.android)
 
+    // Escáner QR: CameraX + ML Kit (lectura en el propio móvil, sin internet)
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.mlkit.barcode.scanning)
+
+    // Reproducción de las cápsulas de video
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.ui)
+
     // Tests
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))

@@ -5,11 +5,15 @@ import com.example.aprendoiasantiago.utils.Hash
 /**
  * Datos ficticios para poblar la base local (regla del caso: solo datos sintéticos).
  * Las coordenadas y altitudes son aproximadas: reemplázalas por el listado oficial que entrega el caso.
- * Los videos son enlaces de relleno (example.com), no existen.
+ * Todas las cápsulas apuntan a un mismo video de muestra: reemplaza [VIDEO_PRUEBA] (o cada urlVideo)
+ * por los enlaces de los videos piloto que entrega el caso.
  */
 object DatosEjemplo {
     const val USUARIO_DEMO = "demo"
     const val CLAVE_DEMO = "demo1234"
+
+    /** Video público de muestra (Big Buck Bunny) para probar el reproductor. */
+    const val VIDEO_PRUEBA = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
 
     val puntos: List<PuntoTuristicoEntity> = listOf(
         PuntoTuristicoEntity(
@@ -50,13 +54,13 @@ object DatosEjemplo {
     )
 
     val capsulas: List<CapsulaEntity> = listOf(
-        CapsulaEntity(1, puntoId = 1, titulo = "¿Qué es la Inteligencia Artificial?", urlVideo = "https://example.com/videos/aprendo-ia-01.mp4", codigoQr = "AIJS-001", puntos = 10),
-        CapsulaEntity(2, puntoId = 2, titulo = "Cómo aprende una máquina", urlVideo = "https://example.com/videos/aprendo-ia-02.mp4", codigoQr = "AIJS-002", puntos = 10),
-        CapsulaEntity(3, puntoId = 3, titulo = "Reconocimiento de imágenes", urlVideo = "https://example.com/videos/aprendo-ia-03.mp4", codigoQr = "AIJS-003", puntos = 15),
-        CapsulaEntity(4, puntoId = 4, titulo = "La IA y los datos abiertos", urlVideo = "https://example.com/videos/aprendo-ia-04.mp4", codigoQr = "AIJS-004", puntos = 10),
-        CapsulaEntity(5, puntoId = 5, titulo = "IA y creatividad", urlVideo = "https://example.com/videos/aprendo-ia-05.mp4", codigoQr = "AIJS-005", puntos = 15),
-        CapsulaEntity(6, puntoId = 6, titulo = "La IA en la vida diaria", urlVideo = "https://example.com/videos/aprendo-ia-06.mp4", codigoQr = "AIJS-006", puntos = 10),
-        CapsulaEntity(7, puntoId = 7, titulo = "Arte generado por IA", urlVideo = "https://example.com/videos/aprendo-ia-07.mp4", codigoQr = "AIJS-007", puntos = 15)
+        CapsulaEntity(1, puntoId = 1, titulo = "¿Qué es la Inteligencia Artificial?", urlVideo = VIDEO_PRUEBA, codigoQr = "AIJS-001", puntos = 10),
+        CapsulaEntity(2, puntoId = 2, titulo = "Cómo aprende una máquina", urlVideo = VIDEO_PRUEBA, codigoQr = "AIJS-002", puntos = 10),
+        CapsulaEntity(3, puntoId = 3, titulo = "Reconocimiento de imágenes", urlVideo = VIDEO_PRUEBA, codigoQr = "AIJS-003", puntos = 15),
+        CapsulaEntity(4, puntoId = 4, titulo = "La IA y los datos abiertos", urlVideo = VIDEO_PRUEBA, codigoQr = "AIJS-004", puntos = 10),
+        CapsulaEntity(5, puntoId = 5, titulo = "Cómo entiende una IA la voz y el idioma", urlVideo = VIDEO_PRUEBA, codigoQr = "AIJS-005", puntos = 15),
+        CapsulaEntity(6, puntoId = 6, titulo = "La IA en la vida diaria", urlVideo = VIDEO_PRUEBA, codigoQr = "AIJS-006", puntos = 10),
+        CapsulaEntity(7, puntoId = 7, titulo = "Cuando la IA se equivoca: sesgos y errores", urlVideo = VIDEO_PRUEBA, codigoQr = "AIJS-007", puntos = 15)
     )
 
     val usuarios: List<UsuarioEntity> = listOf(

@@ -14,7 +14,9 @@ class ViewModelFactory(private val contenedor: AppContainer) : ViewModelProvider
         modelClass.isAssignableFrom(MapaViewModel::class.java) ->
             MapaViewModel(contenedor.juego)
         modelClass.isAssignableFrom(EscanerViewModel::class.java) ->
-            EscanerViewModel(contenedor.juego)
+            EscanerViewModel(contenedor.juego, contenedor.sesion)
+        modelClass.isAssignableFrom(CapsulaViewModel::class.java) ->
+            CapsulaViewModel(contenedor.juego)
         modelClass.isAssignableFrom(PerfilViewModel::class.java) ->
             PerfilViewModel(contenedor.juego, contenedor.sesion)
         else -> throw IllegalArgumentException("ViewModel desconocido: ${modelClass.name}")

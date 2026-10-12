@@ -14,15 +14,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.aprendoiasantiago.AppContainer
+import com.example.aprendoiasantiago.ui.capsula.CapsulaScreen
 import com.example.aprendoiasantiago.ui.escaner.EscanerScreen
 import com.example.aprendoiasantiago.ui.login.LoginScreen
 import com.example.aprendoiasantiago.ui.mapa.MapaScreen
 import com.example.aprendoiasantiago.ui.perfil.PerfilScreen
+import com.example.aprendoiasantiago.ui.viewmodels.CapsulaViewModel
 import com.example.aprendoiasantiago.ui.viewmodels.EscanerViewModel
 import com.example.aprendoiasantiago.ui.viewmodels.LoginViewModel
 import com.example.aprendoiasantiago.ui.viewmodels.MapaViewModel
@@ -83,8 +87,27 @@ fun AppNavigation(contenedor: AppContainer) {
 
             composable(Destino.ESCANER.ruta) {
                 val viewModel: EscanerViewModel = viewModel(factory = fabrica)
-                val capsulas by viewModel.capsulas.collectAsStateWithLifecycle()
-                EscanerScreen(capsulas = capsulas)
+                val estado by viewModel.estado.collectAsStateWithLifecycle()
+                EscanerScreen(
+                    estado = estado,
+                    onCodigoDetectado = viewModel::onCodigoDetectado,
+                    onEscanearOtro = viewModel::escanearOtro,
+                    onVerCapsula = { capsulaId -> navController.navigate(rutaCapsula(capsulaId)) }
+                )
+            }
+
+            composable(
+                route = RUTA_CAPSULA,
+                arguments = listOf(navArgument(ARG_CAPSULA_ID) { type = NavType.LongType })
+            ) { entrada ->
+                val capsulaId = entrada.arguments?.getLong(ARG_CAPSULA_ID) ?: -1L
+                val viewModel: CapsulaViewModel = viewModel(factory = fabrica)
+                val estado by viewModel.estado.collectAsStateWithLifecycle()
+                LaunchedEffect(capsulaId) { viewModel.cargar(capsulaId) }
+                CapsulaScreen(
+                    estado = estado,
+                    onVolver = { navController.popBackStack() }
+                )
             }
 
             composable(Destino.PERFIL.ruta) {

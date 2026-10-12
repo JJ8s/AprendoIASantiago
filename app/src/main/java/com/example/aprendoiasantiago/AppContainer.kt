@@ -17,7 +17,7 @@ class AppContainer(context: Context, appScope: CoroutineScope) {
     private val db = AppDatabase.crear(context)
 
     /** Se lanza al crear el contenedor; quien necesite los datos iniciales hace `await()`. */
-    private val sembradoListo = appScope.async { SembradoInicial(db).ejecutarSiVacio() }
+    private val sembradoListo = appScope.async { SembradoInicial(db).ejecutar() }
 
     val sesion = SesionRepository()
     val auth = AuthRepository(db.usuarioDao(), sembradoListo)

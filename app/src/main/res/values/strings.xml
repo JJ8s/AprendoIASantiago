@@ -27,9 +27,30 @@
     <string name="mapa_coordenadas">Lat %1$.5f · Lon %2$.5f · Alt %3$.0f m</string>
 
     <!-- Escáner -->
-    <string name="escaner_titulo">Escanear QR</string>
-    <string name="escaner_aviso">La cámara se agregará en la siguiente etapa. Códigos QR de prueba disponibles:</string>
-    <string name="escaner_capsula">%1$s · %2$d pts</string>
+    <string name="escaner_instruccion">Apunta la cámara al código QR del punto turístico</string>
+    <string name="escaner_permiso_titulo">Necesitamos la cámara</string>
+    <string name="escaner_permiso_texto">Para leer los códigos QR, permite el acceso a la cámara.</string>
+    <string name="escaner_permiso_boton">Permitir cámara</string>
+    <string name="escaner_ajustes_boton">Abrir ajustes</string>
+    <string name="escaner_manual_label">¿No puedes escanear? Escribe el código</string>
+    <string name="escaner_manual_boton">Probar</string>
+
+    <!-- Resultado del escaneo -->
+    <string name="resultado_valido_titulo">¡Código válido!</string>
+    <string name="resultado_puntos_ganados">Ganaste %1$d puntos</string>
+    <string name="resultado_repetida">Ya completaste esta cápsula, no se suman puntos otra vez.</string>
+    <string name="resultado_punto">Punto: %1$s</string>
+    <string name="resultado_ver_capsula">Ver cápsula</string>
+    <string name="resultado_escanear_otro">Escanear otro</string>
+    <string name="resultado_desconocido_titulo">Código no reconocido</string>
+    <string name="resultado_desconocido_texto">El código «%1$s» no pertenece a ninguna cápsula.</string>
+    <string name="resultado_error">Ocurrió un error inesperado. Intenta de nuevo.</string>
+
+    <!-- Cápsula -->
+    <string name="capsula_volver">Volver</string>
+    <string name="capsula_puntos">Vale %1$d puntos</string>
+    <string name="capsula_no_encontrada">No se encontró la cápsula.</string>
+    <string name="capsula_video_error">No se pudo reproducir el video. Revisa tu conexión a internet.</string>
 
     <!-- Perfil -->
     <string name="perfil_titulo">Perfil</string>

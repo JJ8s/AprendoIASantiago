@@ -9,10 +9,10 @@ import com.example.aprendoiasantiago.data.local.UsuarioDao
 import com.example.aprendoiasantiago.data.local.UsuarioEntity
 import kotlinx.coroutines.flow.Flow
 
-/** Acceso de solo lectura (por ahora) a los datos del juego: puntos, cápsulas, ranking y avance. */
+/** Acceso a los datos del juego: puntos, cápsulas, ranking, avance y lectura de códigos QR. */
 class JuegoRepository(
-    puntoDao: PuntoDao,
-    capsulaDao: CapsulaDao,
+    private val puntoDao: PuntoDao,
+    private val capsulaDao: CapsulaDao,
     private val usuarioDao: UsuarioDao,
     private val progresoDao: ProgresoDao
 ) {
@@ -24,4 +24,25 @@ class JuegoRepository(
     fun usuario(id: Long): Flow<UsuarioEntity?> = usuarioDao.observarPorId(id)
 
     fun capsulasCompletadas(usuarioId: Long): Flow<Int> = progresoDao.observarCompletadas(usuarioId)
+
+    suspend fun obtenerCapsula(id: Long): CapsulaEntity? = capsulaDao.buscarPorId(id)
+
+    suspend fun obtenerPunto(id: Long): PuntoTuristicoEntity? = puntoDao.buscarPorId(id)
+
+    /**
+     * Valida el texto de un QR. Si corresponde a una cápsula, la marca como completada
+     * y suma sus puntos al usuario (solo la primera vez).
+     */
+    suspend fun procesarCodigo(usuarioId: Long, codigoLeido: String): ResultadoEscaneo {
+        val codigo = codigoLeido.trim()
+        val capsula = capsulaDao.buscarPorCodigo(codigo)
+            ?: return ResultadoEscaneo.Desconocido(codigo)
+
+        val esNueva = progresoDao.completarCapsula(usuarioId, capsula.id, capsula.puntos)
+        return ResultadoEscaneo.Valido(
+            capsula = capsula,
+            punto = puntoDao.buscarPorId(capsula.puntoId),
+            puntosGanados = if (esNueva) capsula.puntos else 0
+        )
+    }
 }
