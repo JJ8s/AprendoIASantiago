@@ -1,7 +1,10 @@
 package com.example.aprendoiasantiago.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -10,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -42,7 +46,6 @@ fun AppNavigation(contenedor: AppContainer) {
 
     Scaffold(
         bottomBar = {
-            // La barra inferior solo existe en las pestañas, no en el login.
             if (destinoActual != null) {
                 BarraInferior(actual = destinoActual) { destino ->
                     navController.navigate(destino.ruta) {
@@ -79,6 +82,15 @@ fun AppNavigation(contenedor: AppContainer) {
                 )
             }
 
+            composable(Destino.INICIO.ruta) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "Pantalla de Inicio (Próximamente)",
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+                }
+            }
+
             composable(Destino.MAPA.ruta) {
                 val viewModel: MapaViewModel = viewModel(factory = fabrica)
                 val puntos by viewModel.puntos.collectAsStateWithLifecycle()
@@ -96,6 +108,15 @@ fun AppNavigation(contenedor: AppContainer) {
                 )
             }
 
+            composable(Destino.COLECCION.ruta) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "Mis Descubrimientos (Próximamente)",
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+                }
+            }
+
             composable(
                 route = RUTA_CAPSULA,
                 arguments = listOf(navArgument(ARG_CAPSULA_ID) { type = NavType.LongType })
@@ -103,7 +124,11 @@ fun AppNavigation(contenedor: AppContainer) {
                 val capsulaId = entrada.arguments?.getLong(ARG_CAPSULA_ID) ?: -1L
                 val viewModel: CapsulaViewModel = viewModel(factory = fabrica)
                 val estado by viewModel.estado.collectAsStateWithLifecycle()
-                LaunchedEffect(capsulaId) { viewModel.cargar(capsulaId) }
+
+                LaunchedEffect(capsulaId) {
+                    viewModel.cargar(capsulaId)
+                }
+
                 CapsulaScreen(
                     estado = estado,
                     onVolver = { navController.popBackStack() }
