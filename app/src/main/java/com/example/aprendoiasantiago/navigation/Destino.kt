@@ -7,6 +7,8 @@ import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.aprendoiasantiago.R
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.PhotoLibrary
 
 /** Ruta de la pantalla de login (no aparece en la barra inferior). */
 const val RUTA_LOGIN = "login"
@@ -23,12 +25,13 @@ enum class Destino(
     @StringRes val titulo: Int,
     val icono: ImageVector
 ) {
+    INICIO("inicio", R.string.destino_inicio, Icons.Filled.Home),
     MAPA("mapa", R.string.destino_mapa, Icons.Filled.Map),
     ESCANER("escaner", R.string.destino_escaner, Icons.Filled.CameraAlt),
+    COLECCION("coleccion", R.string.destino_coleccion, Icons.Filled.PhotoLibrary),
     PERFIL("perfil", R.string.destino_perfil, Icons.Filled.Person);
 
     companion object {
-        /** Devuelve la pestaña que corresponde a una ruta, o `null` (por ejemplo, en el login). */
         fun deRuta(ruta: String?): Destino? = entries.firstOrNull { it.ruta == ruta }
     }
 }

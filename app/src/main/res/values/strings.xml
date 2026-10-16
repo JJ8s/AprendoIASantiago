@@ -5,6 +5,8 @@
     <string name="destino_mapa">Mapa</string>
     <string name="destino_escaner">Escanear QR</string>
     <string name="destino_perfil">Perfil</string>
+    <string name="destino_inicio">Inicio</string>
+    <string name="destino_coleccion">Colección</string>
 
     <!-- Login -->
     <string name="login_titulo">Aprendo IA Jugando en Santiago</string>
