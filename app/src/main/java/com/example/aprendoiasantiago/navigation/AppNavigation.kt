@@ -27,6 +27,7 @@ import androidx.navigation.navArgument
 import com.example.aprendoiasantiago.AppContainer
 import com.example.aprendoiasantiago.ui.capsula.CapsulaScreen
 import com.example.aprendoiasantiago.ui.escaner.EscanerScreen
+import com.example.aprendoiasantiago.ui.inicio.InicioScreen
 import com.example.aprendoiasantiago.ui.login.LoginScreen
 import com.example.aprendoiasantiago.ui.mapa.MapaScreen
 import com.example.aprendoiasantiago.ui.perfil.PerfilScreen
@@ -49,7 +50,7 @@ fun AppNavigation(contenedor: AppContainer) {
             if (destinoActual != null) {
                 BarraInferior(actual = destinoActual) { destino ->
                     navController.navigate(destino.ruta) {
-                        popUpTo(Destino.MAPA.ruta) { saveState = true }
+                        popUpTo(Destino.INICIO.ruta) { saveState = true }
                         launchSingleTop = true
                         restoreState = true
                     }
@@ -68,7 +69,8 @@ fun AppNavigation(contenedor: AppContainer) {
 
                 LaunchedEffect(estado.autenticado) {
                     if (estado.autenticado) {
-                        navController.navigate(Destino.MAPA.ruta) {
+                        // Al iniciar sesión ahora vamos directo al Dashboard (INICIO)
+                        navController.navigate(Destino.INICIO.ruta) {
                             popUpTo(RUTA_LOGIN) { inclusive = true }
                         }
                     }
@@ -83,12 +85,15 @@ fun AppNavigation(contenedor: AppContainer) {
             }
 
             composable(Destino.INICIO.ruta) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(
-                        text = "Pantalla de Inicio (Próximamente)",
-                        style = MaterialTheme.typography.headlineMedium
-                    )
-                }
+                val viewModel: PerfilViewModel = viewModel(factory = fabrica)
+                val estado by viewModel.estado.collectAsStateWithLifecycle()
+
+                InicioScreen(
+                    estado = estado,
+                    onIrAMapa = { navController.navigate(Destino.MAPA.ruta) },
+                    onIrAEscaner = { navController.navigate(Destino.ESCANER.ruta) },
+                    onIrAColeccion = { navController.navigate(Destino.COLECCION.ruta) }
+                )
             }
 
             composable(Destino.MAPA.ruta) {
@@ -143,7 +148,7 @@ fun AppNavigation(contenedor: AppContainer) {
                     onCerrarSesion = {
                         viewModel.cerrarSesion()
                         navController.navigate(RUTA_LOGIN) {
-                            popUpTo(Destino.MAPA.ruta) { inclusive = true }
+                            popUpTo(Destino.INICIO.ruta) { inclusive = true }
                             launchSingleTop = true
                         }
                     }
