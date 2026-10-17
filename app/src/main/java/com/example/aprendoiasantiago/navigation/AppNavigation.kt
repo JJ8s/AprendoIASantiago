@@ -37,6 +37,7 @@ import com.example.aprendoiasantiago.ui.viewmodels.LoginViewModel
 import com.example.aprendoiasantiago.ui.viewmodels.MapaViewModel
 import com.example.aprendoiasantiago.ui.viewmodels.PerfilViewModel
 import com.example.aprendoiasantiago.ui.viewmodels.ViewModelFactory
+import com.example.aprendoiasantiago.ui.coleccion.ColeccionScreen
 
 @Composable
 fun AppNavigation(contenedor: AppContainer) {
@@ -45,15 +46,33 @@ fun AppNavigation(contenedor: AppContainer) {
     val entradaActual by navController.currentBackStackEntryAsState()
     val destinoActual = Destino.deRuta(entradaActual?.destination?.route)
 
+    // Función centralizada para cambiar entre las 5 pestañas principales sin trabarse
+    fun navegarAPestana(destino: Destino) {
+        if (destino == Destino.INICIO) {
+            // Si el usuario toca "Inicio", limpiamos las pantallas encima y volvemos directo al Dashboard
+            val volvioAInicio = navController.popBackStack(Destino.INICIO.ruta, inclusive = false)
+            if (!volvioAInicio) {
+                navController.navigate(Destino.INICIO.ruta) {
+                    launchSingleTop = true
+                }
+            }
+        } else {
+            // Si toca Mapa, Escáner, Colección o Perfil, navegamos dejando Inicio como base segura
+            navController.navigate(destino.ruta) {
+                popUpTo(Destino.INICIO.ruta) {
+                    saveState = true
+                }
+                launchSingleTop = true
+                restoreState = true
+            }
+        }
+    }
+
     Scaffold(
         bottomBar = {
             if (destinoActual != null) {
                 BarraInferior(actual = destinoActual) { destino ->
-                    navController.navigate(destino.ruta) {
-                        popUpTo(Destino.INICIO.ruta) { saveState = true }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+                    navegarAPestana(destino)
                 }
             }
         }
@@ -69,7 +88,6 @@ fun AppNavigation(contenedor: AppContainer) {
 
                 LaunchedEffect(estado.autenticado) {
                     if (estado.autenticado) {
-                        // Al iniciar sesión ahora vamos directo al Dashboard (INICIO)
                         navController.navigate(Destino.INICIO.ruta) {
                             popUpTo(RUTA_LOGIN) { inclusive = true }
                         }
@@ -90,9 +108,9 @@ fun AppNavigation(contenedor: AppContainer) {
 
                 InicioScreen(
                     estado = estado,
-                    onIrAMapa = { navController.navigate(Destino.MAPA.ruta) },
-                    onIrAEscaner = { navController.navigate(Destino.ESCANER.ruta) },
-                    onIrAColeccion = { navController.navigate(Destino.COLECCION.ruta) }
+                    onIrAMapa = { navegarAPestana(Destino.MAPA) },
+                    onIrAEscaner = { navegarAPestana(Destino.ESCANER) },
+                    onIrAColeccion = { navegarAPestana(Destino.COLECCION) }
                 )
             }
 
@@ -114,12 +132,14 @@ fun AppNavigation(contenedor: AppContainer) {
             }
 
             composable(Destino.COLECCION.ruta) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(
-                        text = "Mis Descubrimientos (Próximamente)",
-                        style = MaterialTheme.typography.headlineMedium
-                    )
-                }
+                val viewModel: PerfilViewModel = viewModel(factory = fabrica)
+                val estado by viewModel.estado.collectAsStateWithLifecycle()
+
+                ColeccionScreen(
+                    estado = estado,
+                    onVerCapsula = { capsulaId -> navController.navigate(rutaCapsula(capsulaId)) },
+                    onIrAEscaner = { navController.navigate(Destino.ESCANER.ruta) }
+                )
             }
 
             composable(
