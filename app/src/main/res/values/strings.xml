@@ -1,0 +1,89 @@
+<resources>
+    <string name="app_name">AprendoIA Santiago</string>
+
+    <!-- Navegación -->
+    <string name="destino_mapa">Mapa</string>
+    <string name="destino_escaner">Escanear QR</string>
+    <string name="destino_perfil">Perfil</string>
+    <string name="destino_inicio">Inicio</string>
+    <string name="destino_coleccion">Colección</string>
+
+    <!-- Login -->
+    <string name="login_titulo">Aprendo IA Jugando en Santiago</string>
+    <string name="login_subtitulo">Inicia sesión para comenzar</string>
+    <string name="login_usuario">Usuario</string>
+    <string name="login_clave">Contraseña</string>
+    <string name="login_confirmar_clave">Confirmar contraseña</string>
+    <string name="login_ingresar">Ingresar</string>
+    <string name="login_ingresando">Ingresando…</string>
+    <string name="login_mostrar_clave">Mostrar contraseña</string>
+    <string name="login_ocultar_clave">Ocultar contraseña</string>
+    <string name="login_pista">Usuario de prueba: %1$s / %2$s</string>
+    <string name="error_usuario_vacio">Escribe tu usuario.</string>
+    <string name="error_clave_vacia">Escribe tu contraseña.</string>
+    <string name="error_confirmacion_vacia">Repite tu contraseña para confirmarla.</string>
+    <string name="error_claves_no_coinciden">Las contraseñas no coinciden.</string>
+    <string name="error_credenciales">Usuario o contraseña incorrectos.</string>
+    <string name="error_inesperado">Ocurrió un error inesperado. Intenta de nuevo.</string>
+
+    <!-- Mapa -->
+    <string name="mapa_mi_ubicacion">Centrar el mapa en mi ubicación</string>
+    <string name="mapa_buscando_ubicacion">Buscando tu ubicación…</string>
+    <string name="mapa_ruta_etiqueta">%1$s (%2$d/%3$d)</string>
+    <string name="mapa_ruta_parada">%1$d. %2$s</string>
+    <string name="mapa_coordenadas">Lat %1$.5f · Lon %2$.5f · Alt %3$.0f m</string>
+
+    <!-- Escáner -->
+    <string name="escaner_instruccion">Apunta la cámara al código QR del punto turístico</string>
+    <string name="escaner_permiso_titulo">Necesitamos la cámara</string>
+    <string name="escaner_permiso_texto">Para leer los códigos QR, permite el acceso a la cámara.</string>
+    <string name="escaner_permiso_boton">Permitir cámara</string>
+    <string name="escaner_ajustes_boton">Abrir ajustes</string>
+    <string name="escaner_manual_label">¿No puedes escanear? Escribe el código</string>
+    <string name="escaner_manual_boton">Probar</string>
+
+    <!-- Resultado del escaneo -->
+    <string name="resultado_valido_titulo">¡Código válido!</string>
+    <string name="resultado_puntos_ganados">Ganaste %1$d puntos</string>
+    <string name="resultado_repetida">Ya completaste esta cápsula, no se suman puntos otra vez.</string>
+    <string name="resultado_punto">Punto: %1$s</string>
+    <string name="resultado_ver_capsula">Ver cápsula</string>
+    <string name="resultado_escanear_otro">Escanear otro</string>
+    <string name="resultado_desconocido_titulo">Código no reconocido</string>
+    <string name="resultado_desconocido_texto">El código «%1$s» no pertenece a ninguna cápsula.</string>
+    <string name="resultado_error">Ocurrió un error inesperado. Intenta de nuevo.</string>
+
+    <!-- Cápsula -->
+    <string name="capsula_volver">Volver</string>
+    <string name="capsula_puntos">Vale %1$d puntos</string>
+    <string name="capsula_no_encontrada">No se encontró la cápsula.</string>
+    <string name="capsula_video_error">No se pudo reproducir el video. Revisa tu conexión a internet.</string>
+
+    <!-- Perfil -->
+    <string name="perfil_titulo">Perfil</string>
+    <string name="perfil_puntaje">Puntaje: %1$d</string>
+    <string name="perfil_progreso">Cápsulas completadas: %1$d de %2$d</string>
+    <string name="perfil_ranking">Ranking</string>
+    <string name="perfil_posicion">%1$d. %2$s</string>
+    <string name="perfil_tu">(tú)</string>
+    <string name="puntos_formato">%1$d pts</string>
+    <string name="perfil_cerrar_sesion">Cerrar sesión</string>
+
+    <!-- Estado y evidencia -->
+    <string name="mapa_estado_completado">Estado: completado (%1$d de %2$d cápsulas)</string>
+    <string name="mapa_estado_pendiente">Estado: pendiente (%1$d de %2$d cápsulas)</string>
+    <string name="resultado_tomar_evidencia">Tomar evidencia (selfie y foto)</string>
+    <string name="evidencia_paso_selfie">Paso 1 de 2: tu selfie</string>
+    <string name="evidencia_paso_entorno">Paso 2 de 2: foto del entorno</string>
+    <string name="evidencia_instruccion_selfie">Mírate a la cámara frontal. Debe verse solo tu rostro, de frente y con buena luz.</string>
+    <string name="evidencia_instruccion_entorno">Apunta la cámara trasera al lugar donde escaneaste el QR.</string>
+    <string name="evidencia_tomar_foto">Tomar foto</string>
+    <string name="evidencia_listo_titulo">¡Evidencia guardada!</string>
+    <string name="evidencia_listo_texto">Ya tienes la selfie y la foto del entorno de esta cápsula.</string>
+    <string name="evidencia_no_disponible">Primero debes completar la cápsula escaneando su QR.</string>
+    <string name="evidencia_error_sin_rostro">No detectamos ningún rostro. Acércate y busca más luz.</string>
+    <string name="evidencia_error_varios_rostros">Se ven varios rostros. La selfie debe tener solo uno.</string>
+    <string name="evidencia_error_rostro_lejos">Tu rostro se ve muy pequeño. Acércate a la cámara.</string>
+    <string name="evidencia_error_captura">No se pudo sacar la foto. Intenta de nuevo.</string>
+    <string name="evidencia_error_guardado">No se pudo guardar la foto. Intenta de nuevo.</string>
+</resources>
