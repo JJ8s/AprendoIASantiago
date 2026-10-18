@@ -38,6 +38,7 @@ import com.example.aprendoiasantiago.ui.viewmodels.MapaViewModel
 import com.example.aprendoiasantiago.ui.viewmodels.PerfilViewModel
 import com.example.aprendoiasantiago.ui.viewmodels.ViewModelFactory
 import com.example.aprendoiasantiago.ui.coleccion.ColeccionScreen
+import com.example.aprendoiasantiago.ui.bienvenida.BienvenidaScreen
 
 @Composable
 fun AppNavigation(contenedor: AppContainer) {
@@ -79,9 +80,21 @@ fun AppNavigation(contenedor: AppContainer) {
     ) { relleno ->
         NavHost(
             navController = navController,
-            startDestination = RUTA_LOGIN,
+            startDestination = RUTA_BIENVENIDA,
             modifier = Modifier.padding(relleno)
         ) {
+            // 1. PANTALLA DE BIENVENIDA (Portada animada del juego)
+            composable(RUTA_BIENVENIDA) {
+                BienvenidaScreen(
+                    onComenzar = {
+                        navController.navigate(RUTA_LOGIN) {
+                            popUpTo(RUTA_BIENVENIDA) { inclusive = true }
+                        }
+                    }
+                )
+            }
+
+            // 2. PANTALLA DE LOGIN / SELECCIÓN DE JUGADOR
             composable(RUTA_LOGIN) {
                 val viewModel: LoginViewModel = viewModel(factory = fabrica)
                 val estado by viewModel.estado.collectAsStateWithLifecycle()
@@ -98,7 +111,12 @@ fun AppNavigation(contenedor: AppContainer) {
                     estado = estado,
                     onUsuarioCambia = viewModel::onUsuarioCambia,
                     onClaveCambia = viewModel::onClaveCambia,
-                    onIngresar = viewModel::iniciarSesion
+                    onIngresar = viewModel::iniciarSesion,
+                    onNombreRegistroCambia = viewModel::onNombreRegistroCambia,
+                    onAvatarCambia = viewModel::onAvatarCambia,
+                    onCambiarModoRegistro = viewModel::cambiarModoRegistro,
+                    onSeleccionarPerfil = viewModel::seleccionarPerfil,
+                    onRegistrar = viewModel::registrarJugador
                 )
             }
 

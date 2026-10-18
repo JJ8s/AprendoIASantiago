@@ -9,8 +9,16 @@ import com.example.aprendoiasantiago.utils.Hash
  * por los enlaces de los videos piloto que entrega el caso.
  */
 object DatosEjemplo {
+
+
     const val USUARIO_DEMO = "demo"
     const val CLAVE_DEMO = "demo1234"
+
+    // Cuentas en duro exigidas por el caso de estudio (Triskeledu SpA)
+    const val USUARIO_ADMIN = "Admin"
+    const val CLAVE_ADMIN = "123"
+    const val USUARIO_CREADOR = "GenCont"
+    const val CLAVE_CREADOR = "123"
 
     /** Video público de muestra (Big Buck Bunny) para probar el reproductor. */
     const val VIDEO_PRUEBA = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
@@ -64,8 +72,30 @@ object DatosEjemplo {
     )
 
     val usuarios: List<UsuarioEntity> = listOf(
-        UsuarioEntity(id = 1, nombreUsuario = USUARIO_DEMO, claveHash = Hash.sha256(CLAVE_DEMO), nombreVisible = "Usuario Demo", puntaje = 0),
-        // Usuarios ficticios solo para el ranking (claveHash vacío: no pueden iniciar sesión).
+        UsuarioEntity(
+            id = 1,
+            nombreUsuario = USUARIO_DEMO,
+            claveHash = Hash.sha256(CLAVE_DEMO),
+            nombreVisible = "Usuario Demo",
+            puntaje = 0
+        ),
+        // Rol 1: Administrador en duro (Alias: Admin / Password: 123)
+        UsuarioEntity(
+            id = 7,
+            nombreUsuario = USUARIO_ADMIN,
+            claveHash = Hash.sha256(CLAVE_ADMIN),
+            nombreVisible = "Administrador",
+            puntaje = 0
+        ),
+        // Rol 2: Creador de Contenido en duro (Alias: GenCont / Password: 123)
+        UsuarioEntity(
+            id = 8,
+            nombreUsuario = USUARIO_CREADOR,
+            claveHash = Hash.sha256(CLAVE_CREADOR),
+            nombreVisible = "Contenido",
+            puntaje = 0
+        ),
+        // Usuarios ficticios para el ranking y selección
         UsuarioEntity(id = 2, nombreUsuario = "camila", claveHash = "", nombreVisible = "Camila R.", puntaje = 320),
         UsuarioEntity(id = 3, nombreUsuario = "matias", claveHash = "", nombreVisible = "Matías P.", puntaje = 270),
         UsuarioEntity(id = 4, nombreUsuario = "valentina", claveHash = "", nombreVisible = "Valentina S.", puntaje = 210),

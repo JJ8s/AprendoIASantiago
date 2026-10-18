@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.PhotoLibrary
 
 /** Ruta de la pantalla de login (no aparece en la barra inferior). */
 const val RUTA_LOGIN = "login"
+const val RUTA_BIENVENIDA = "bienvenida"
 
 /** Pantalla de una cápsula (se abre desde el escáner; no es una pestaña). */
 const val ARG_CAPSULA_ID = "capsulaId"

@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 interface UsuarioDao {
     @Query(
         "SELECT * FROM usuarios " +
-            "WHERE nombreUsuario = :nombreUsuario AND claveHash = :claveHash LIMIT 1"
+                "WHERE nombreUsuario = :nombreUsuario COLLATE NOCASE AND claveHash = :claveHash LIMIT 1"
     )
     suspend fun buscarPorCredenciales(nombreUsuario: String, claveHash: String): UsuarioEntity?
 
@@ -22,11 +22,20 @@ interface UsuarioDao {
     @Query("SELECT * FROM usuarios ORDER BY puntaje DESC, nombreVisible ASC")
     fun observarRanking(): Flow<List<UsuarioEntity>>
 
+    /** Lista todos los perfiles con contraseña activa (Jugadores, Admin y Creador) para Pantalla 3. */
+    @Query("SELECT * FROM usuarios WHERE claveHash != '' ORDER BY id ASC")
+    fun observarPerfilesActivos(): Flow<List<UsuarioEntity>>
+
     @Query("SELECT COUNT(*) FROM usuarios")
     suspend fun contar(): Int
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    /** IGNORE asegura que si el usuario ya existe en el teléfono, NO le borre su puntaje acumulado. */
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertarTodos(usuarios: List<UsuarioEntity>)
+
+    /** Permite registrar un nuevo jugador local en SQLite (Pantalla 2). Devuelve -1 si el alias ya existe. */
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertarJugador(usuario: UsuarioEntity): Long
 }
 
 @Dao

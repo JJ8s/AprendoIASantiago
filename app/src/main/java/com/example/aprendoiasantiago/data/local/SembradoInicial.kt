@@ -10,8 +10,7 @@ class SembradoInicial(private val db: AppDatabase) {
     suspend fun ejecutar() {
         db.puntoDao().guardarTodos(DatosEjemplo.puntos)
         db.capsulaDao().guardarTodas(DatosEjemplo.capsulas)
-        if (db.usuarioDao().contar() == 0) {
-            db.usuarioDao().insertarTodos(DatosEjemplo.usuarios)
-        }
+        db.usuarioDao().insertarTodos(DatosEjemplo.usuarios)
+
     }
 }
