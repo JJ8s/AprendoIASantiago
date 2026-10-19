@@ -44,6 +44,8 @@ import com.example.aprendoiasantiago.ui.bienvenida.BienvenidaScreen
 import com.example.aprendoiasantiago.ui.admin.AdminScreen
 import com.example.aprendoiasantiago.ui.viewmodels.AdminViewModel
 import com.example.aprendoiasantiago.data.local.DatosEjemplo
+import com.example.aprendoiasantiago.ui.gencont.GenContScreen
+import com.example.aprendoiasantiago.ui.viewmodels.GenContViewModel
 
 @Composable
 fun AppNavigation(contenedor: AppContainer) {
@@ -107,12 +109,17 @@ fun AppNavigation(contenedor: AppContainer) {
                 LaunchedEffect(estado.autenticado) {
                     if (estado.autenticado) {
                         if (estado.usuario.equals(DatosEjemplo.USUARIO_ADMIN, ignoreCase = true)) {
-                            // Si el alias es "Admin", lo enviamos directo a su panel exclusivo
+                            // Si es Admin
                             navController.navigate("ruta_admin") {
                                 popUpTo(RUTA_LOGIN) { inclusive = true }
                             }
+                        } else if (estado.usuario.equals(DatosEjemplo.USUARIO_CREADOR, ignoreCase = true)) {
+                            // Si es Creador de Contenido
+                            navController.navigate("ruta_gencont") {
+                                popUpTo(RUTA_LOGIN) { inclusive = true }
+                            }
                         } else {
-                            // Si es un jugador normal, lo enviamos al Dashboard
+                            // Si es un jugador normal
                             navController.navigate(Destino.INICIO.ruta) {
                                 popUpTo(RUTA_LOGIN) { inclusive = true }
                             }
@@ -155,6 +162,27 @@ fun AppNavigation(contenedor: AppContainer) {
                         viewModel.cerrarSesion()
                         navController.navigate(RUTA_LOGIN) {
                             popUpTo("ruta_admin") { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
+                )
+            }
+
+            // 4. PANEL DE CREADOR DE CONTENIDO
+            composable("ruta_gencont") {
+                val viewModel: GenContViewModel = viewModel(factory = fabrica)
+                val capsulas by viewModel.capsulas.collectAsStateWithLifecycle()
+                val puntos by viewModel.puntos.collectAsStateWithLifecycle()
+
+                GenContScreen(
+                    capsulas = capsulas,
+                    puntos = puntos,
+                    onGuardarCapsula = viewModel::guardarCapsula,
+                    onEliminarCapsula = viewModel::eliminarCapsula,
+                    onCerrarSesion = {
+                        viewModel.cerrarSesion()
+                        navController.navigate(RUTA_LOGIN) {
+                            popUpTo("ruta_gencont") { inclusive = true }
                             launchSingleTop = true
                         }
                     }

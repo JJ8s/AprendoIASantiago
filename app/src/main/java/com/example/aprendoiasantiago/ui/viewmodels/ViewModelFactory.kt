@@ -27,10 +27,13 @@ class ViewModelFactory(private val contenedor: AppContainer) : ViewModelProvider
         modelClass.isAssignableFrom(PerfilViewModel::class.java) ->
             PerfilViewModel(contenedor.juego, contenedor.sesion)
 
-        // --- AQUÍ CONECTAMOS EL NUEVO CEREBRO DEL ADMINISTRADOR ---
         // --- PANEL DE ADMINISTRADOR ---
         modelClass.isAssignableFrom(AdminViewModel::class.java) ->
             AdminViewModel(contenedor.auth, contenedor.juego, contenedor.sesion)
+
+        // --- PANEL DE CREADOR DE CONTENIDO ---
+        modelClass.isAssignableFrom(GenContViewModel::class.java) ->
+            GenContViewModel(contenedor.juego, contenedor.sesion)
 
         else -> throw IllegalArgumentException("ViewModel desconocido: ${modelClass.name}")
     } as T
