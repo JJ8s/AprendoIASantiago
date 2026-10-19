@@ -79,4 +79,18 @@ class JuegoRepository(
             puntosGanados = if (esNueva) capsula.puntos else 0
         )
     }
+
+    // --- FUNCIONES DE ADMINISTRACIÓN (PANEL ADMIN Y GENCONT) ---
+
+    suspend fun guardarPunto(punto: PuntoTuristicoEntity) =
+        puntoDao.guardarPunto(punto)
+
+    suspend fun eliminarPunto(id: Long) =
+        puntoDao.eliminarPunto(id)
+
+    suspend fun guardarCapsula(capsula: CapsulaEntity) =
+        capsulaDao.guardarCapsula(capsula)
+
+    suspend fun eliminarCapsula(id: Long) =
+        capsulaDao.eliminarCapsula(id)
 }

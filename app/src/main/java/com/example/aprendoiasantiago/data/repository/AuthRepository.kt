@@ -53,4 +53,13 @@ class AuthRepository(
             claveHash = Hash.sha256(clave)
         )
     }
+
+    /** Elimina un jugador de la base de datos por su ID (Panel Admin) */
+    suspend fun eliminarJugador(id: Long) {
+        usuarioDao.eliminarPorId(id)
+
+    }
+
+
+
 }
