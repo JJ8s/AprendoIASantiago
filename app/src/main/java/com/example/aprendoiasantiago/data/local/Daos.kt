@@ -36,6 +36,9 @@ interface UsuarioDao {
     /** Permite registrar un nuevo jugador local en SQLite (Pantalla 2). Devuelve -1 si el alias ya existe. */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertarJugador(usuario: UsuarioEntity): Long
+
+    @Query("DELETE FROM usuarios WHERE id = :id")
+    suspend fun eliminarPorId(id: Long)
 }
 
 @Dao
@@ -49,6 +52,12 @@ interface PuntoDao {
     /** Inserta o actualiza (sin borrar la fila, así no se pierde el progreso asociado). */
     @Upsert
     suspend fun guardarTodos(puntos: List<PuntoTuristicoEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun guardarPunto(punto: PuntoTuristicoEntity)
+
+    @Query("DELETE FROM puntos_turisticos WHERE id = :id")
+    suspend fun eliminarPunto(id: Long)
 }
 
 @Dao
@@ -69,6 +78,12 @@ interface CapsulaDao {
     /** Inserta o actualiza (sin borrar la fila, así no se pierde el progreso asociado). */
     @Upsert
     suspend fun guardarTodas(capsulas: List<CapsulaEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun guardarCapsula(capsula: CapsulaEntity)
+
+    @Query("DELETE FROM capsulas WHERE id = :id")
+    suspend fun eliminarCapsula(id: Long)
 }
 
 @Dao
