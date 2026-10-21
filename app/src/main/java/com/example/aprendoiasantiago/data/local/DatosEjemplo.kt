@@ -21,7 +21,7 @@ object DatosEjemplo {
     const val CLAVE_CREADOR = "123"
 
     /** Video público de muestra (Big Buck Bunny) para probar el reproductor. */
-    const val VIDEO_PRUEBA = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+    const val VIDEO_PRUEBA = "https://github.com/JJ8s/AprendoIASantiago/raw/refs/heads/Brain_Alejandro/Video_ia.mp4.mp4"
 
     val puntos: List<PuntoTuristicoEntity> = listOf(
         PuntoTuristicoEntity(
