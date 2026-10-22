@@ -162,3 +162,9 @@ app/src/main/java/com/example/aprendoiasantiago/
 * **Jordy:** Diseño e implementación de base de datos Room (entidades, DAOs, migraciones), repositorios base, lógica de dominio, servicios de GPS/ML Kit y pruebas unitarias.
 
 * **Alejandro:** Diseño de interfaz en Jetpack Compose, flujos de navegación por roles, implementación completa de los paneles de **Administrador (`AdminScreen`)** y **Creador de Contenido (`GenContScreen`)**, integración multimedia (`ExoPlayer` + video `.mp4`), configuración y pruebas de hardware (cámara QR, selfie y despliegue en emulador API 35).
+
+## 9. Video del proyecto
+
+Mira la demostración de **Aprendo IA Jugando en Santiago**, donde se presentan las principales funcionalidades de la aplicación: navegación por el mapa, escaneo de códigos QR, reproducción de cápsulas educativas, registro de evidencias y sistema de puntuación.
+
+[**▶ Ver video de demostración (Proyecto.mp4)**](./Proyecto.mp4)
