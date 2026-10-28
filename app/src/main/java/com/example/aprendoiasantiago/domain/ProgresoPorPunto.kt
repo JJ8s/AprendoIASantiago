@@ -1,7 +1,7 @@
 package com.example.aprendoiasantiago.domain
 
-import com.example.aprendoiasantiago.data.local.CapsulaEntity
-import com.example.aprendoiasantiago.data.local.PuntoTuristicoEntity
+import com.example.aprendoiasantiago.data.model.CapsulaEntity
+import com.example.aprendoiasantiago.data.model.PuntoTuristicoEntity
 
 /** Un punto turístico junto con cuántas de sus cápsulas completó el usuario. */
 data class PuntoConEstado(

@@ -55,7 +55,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.aprendoiasantiago.R
 import com.example.aprendoiasantiago.data.local.DatosEjemplo
-import com.example.aprendoiasantiago.data.local.UsuarioEntity
+import com.example.aprendoiasantiago.data.model.UsuarioEntity
 import com.example.aprendoiasantiago.domain.ErrorLogin
 import com.example.aprendoiasantiago.ui.viewmodels.LoginUiState
 

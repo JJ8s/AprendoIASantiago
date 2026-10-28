@@ -1,5 +1,12 @@
 package com.example.aprendoiasantiago.data.local
 
+import com.example.aprendoiasantiago.data.model.UsuarioEntity
+import com.example.aprendoiasantiago.data.model.PuntoTuristicoEntity
+import com.example.aprendoiasantiago.data.model.CapsulaEntity
+import com.example.aprendoiasantiago.data.model.ProgresoEntity
+import com.example.aprendoiasantiago.data.model.RutaEntity
+import com.example.aprendoiasantiago.data.model.RutaPuntoEntity
+
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy

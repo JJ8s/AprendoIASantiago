@@ -1,8 +1,8 @@
 package com.example.aprendoiasantiago
 
 import com.example.aprendoiasantiago.data.local.DatosEjemplo
-import com.example.aprendoiasantiago.data.local.RutaEntity
-import com.example.aprendoiasantiago.data.local.RutaPuntoEntity
+import com.example.aprendoiasantiago.data.model.RutaEntity
+import com.example.aprendoiasantiago.data.model.RutaPuntoEntity
 import com.example.aprendoiasantiago.domain.ProgresoPorPunto
 import com.example.aprendoiasantiago.domain.Rutas
 import org.junit.Assert.assertEquals

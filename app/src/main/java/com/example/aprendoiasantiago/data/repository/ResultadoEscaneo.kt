@@ -1,7 +1,7 @@
 package com.example.aprendoiasantiago.data.repository
 
-import com.example.aprendoiasantiago.data.local.CapsulaEntity
-import com.example.aprendoiasantiago.data.local.PuntoTuristicoEntity
+import com.example.aprendoiasantiago.data.model.CapsulaEntity
+import com.example.aprendoiasantiago.data.model.PuntoTuristicoEntity
 
 /** Lo que pasó al leer un código QR. */
 sealed interface ResultadoEscaneo {

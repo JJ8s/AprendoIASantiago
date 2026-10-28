@@ -1,7 +1,7 @@
 package com.example.aprendoiasantiago.data.repository
 
 import com.example.aprendoiasantiago.data.local.UsuarioDao
-import com.example.aprendoiasantiago.data.local.UsuarioEntity
+import com.example.aprendoiasantiago.data.model.UsuarioEntity
 import com.example.aprendoiasantiago.utils.Hash
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.flow.Flow

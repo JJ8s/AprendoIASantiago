@@ -2,7 +2,7 @@ package com.example.aprendoiasantiago.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.aprendoiasantiago.data.local.UsuarioEntity
+import com.example.aprendoiasantiago.data.model.UsuarioEntity
 import com.example.aprendoiasantiago.data.repository.AuthRepository
 import com.example.aprendoiasantiago.data.repository.SesionRepository
 import com.example.aprendoiasantiago.domain.ErrorLogin
