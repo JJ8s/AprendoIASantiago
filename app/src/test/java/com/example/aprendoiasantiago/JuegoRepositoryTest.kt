@@ -1,17 +1,17 @@
 package com.example.aprendoiasantiago
 
 import com.example.aprendoiasantiago.data.local.CapsulaDao
-import com.example.aprendoiasantiago.data.local.CapsulaEntity
+import com.example.aprendoiasantiago.data.model.CapsulaEntity
 import com.example.aprendoiasantiago.data.local.DatosEjemplo
 import com.example.aprendoiasantiago.data.local.ProgresoDao
-import com.example.aprendoiasantiago.data.local.ProgresoEntity
+import com.example.aprendoiasantiago.data.model.ProgresoEntity
 import com.example.aprendoiasantiago.data.local.PuntoDao
-import com.example.aprendoiasantiago.data.local.PuntoTuristicoEntity
+import com.example.aprendoiasantiago.data.model.PuntoTuristicoEntity
 import com.example.aprendoiasantiago.data.local.RutaDao
-import com.example.aprendoiasantiago.data.local.RutaEntity
-import com.example.aprendoiasantiago.data.local.RutaPuntoEntity
+import com.example.aprendoiasantiago.data.model.RutaEntity
+import com.example.aprendoiasantiago.data.model.RutaPuntoEntity
 import com.example.aprendoiasantiago.data.local.UsuarioDao
-import com.example.aprendoiasantiago.data.local.UsuarioEntity
+import com.example.aprendoiasantiago.data.model.UsuarioEntity
 import com.example.aprendoiasantiago.data.repository.JuegoRepository
 import com.example.aprendoiasantiago.data.repository.ResultadoEscaneo
 import com.example.aprendoiasantiago.domain.UbicacionUsuario

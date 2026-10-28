@@ -2,8 +2,8 @@ package com.example.aprendoiasantiago.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.aprendoiasantiago.data.local.CapsulaEntity
-import com.example.aprendoiasantiago.data.local.PuntoTuristicoEntity
+import com.example.aprendoiasantiago.data.model.CapsulaEntity
+import com.example.aprendoiasantiago.data.model.PuntoTuristicoEntity
 import com.example.aprendoiasantiago.data.repository.JuegoRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow

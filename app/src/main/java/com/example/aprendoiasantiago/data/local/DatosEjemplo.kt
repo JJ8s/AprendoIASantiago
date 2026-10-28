@@ -1,5 +1,11 @@
 package com.example.aprendoiasantiago.data.local
 
+import com.example.aprendoiasantiago.data.model.UsuarioEntity
+import com.example.aprendoiasantiago.data.model.PuntoTuristicoEntity
+import com.example.aprendoiasantiago.data.model.CapsulaEntity
+import com.example.aprendoiasantiago.data.model.RutaEntity
+import com.example.aprendoiasantiago.data.model.RutaPuntoEntity
+
 import com.example.aprendoiasantiago.utils.Hash
 
 /**

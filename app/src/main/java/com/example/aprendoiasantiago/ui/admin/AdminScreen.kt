@@ -14,10 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.aprendoiasantiago.data.local.CapsulaEntity
+import com.example.aprendoiasantiago.data.model.CapsulaEntity
 import com.example.aprendoiasantiago.data.local.DatosEjemplo
-import com.example.aprendoiasantiago.data.local.PuntoTuristicoEntity
-import com.example.aprendoiasantiago.data.local.UsuarioEntity
+import com.example.aprendoiasantiago.data.model.PuntoTuristicoEntity
+import com.example.aprendoiasantiago.data.model.UsuarioEntity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

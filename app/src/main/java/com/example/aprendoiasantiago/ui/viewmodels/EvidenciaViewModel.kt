@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.aprendoiasantiago.data.local.AlmacenEvidencias
-import com.example.aprendoiasantiago.data.local.CapsulaEntity
+import com.example.aprendoiasantiago.data.model.CapsulaEntity
 import com.example.aprendoiasantiago.data.repository.JuegoRepository
 import com.example.aprendoiasantiago.data.repository.SesionRepository
 import com.example.aprendoiasantiago.domain.ResultadoRostro

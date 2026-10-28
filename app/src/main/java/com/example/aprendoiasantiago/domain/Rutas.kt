@@ -1,7 +1,7 @@
 package com.example.aprendoiasantiago.domain
 
-import com.example.aprendoiasantiago.data.local.RutaEntity
-import com.example.aprendoiasantiago.data.local.RutaPuntoEntity
+import com.example.aprendoiasantiago.data.model.RutaEntity
+import com.example.aprendoiasantiago.data.model.RutaPuntoEntity
 
 /** Posición del usuario al completar una cápsula. La altitud puede faltar si el GPS no la entrega. */
 data class UbicacionUsuario(
