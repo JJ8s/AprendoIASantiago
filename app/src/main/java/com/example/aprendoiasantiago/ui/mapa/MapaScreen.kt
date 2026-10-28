@@ -8,17 +8,24 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.Text
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MyLocation
+import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -29,8 +36,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -59,19 +68,9 @@ private const val ZOOM_AL_CENTRAR = 17.0
 private const val MARGEN_RUTA_PX = 160
 private const val ANCHO_LINEA_RUTA = 10f
 
-/** Verde oscuro (buen contraste al aire libre) para los puntos ya completados. */
 private const val COLOR_COMPLETADO = 0xFF2E7D32.toInt()
-
-/** Azul fuerte para la línea de la ruta elegida. */
 private const val COLOR_RUTA = 0xFF1565C0.toInt()
-
-// Política de OpenStreetMap: el User-Agent debe nombrar la app de forma única y estable.
-// No uses el nombre del paquete (com.example...) ni el valor por defecto de la librería: los bloquean.
-// Opcional y recomendado: agrega al final un contacto tuyo, por ejemplo "(https://tu-sitio o correo)".
 private const val USER_AGENT = "AprendoIASantiago/1.0 (proyecto academico MVP)"
-
-// Si cambias el User-Agent o te bloquean de nuevo, cambia este nombre para empezar con una caché limpia
-// (la caché guarda hasta la imagen de "Access blocked" que respondió el servidor).
 private const val CARPETA_CACHE = "osmdroid_v2"
 
 private val PERMISOS_UBICACION = arrayOf(
@@ -79,15 +78,11 @@ private val PERMISOS_UBICACION = arrayOf(
     Manifest.permission.ACCESS_COARSE_LOCATION
 )
 
-/**
- * Mapa interactivo de OpenStreetMap (osmdroid, gratuito y sin API key).
- * Muestra un marcador por cada punto turístico guardado en Room y, si el usuario da el permiso,
- * su ubicación actual. Tocar un marcador abre su descripción.
- */
 @Composable
 fun MapaScreen(
     estado: MapaUiState,
     onSeleccionarRuta: (Long) -> Unit,
+    onVerCatalogoClick: () -> Unit = {}, // <-- NUEVO: Evento para abrir el catálogo
     modifier: Modifier = Modifier
 ) {
     val contexto = LocalContext.current
@@ -108,7 +103,6 @@ fun MapaScreen(
         permisoConcedido = resultado.values.any { concedido -> concedido }
     }
 
-    // Pide el permiso una sola vez al abrir el mapa (el caso exige acceso a la ubicación).
     LaunchedEffect(Unit) {
         if (!permisoConcedido && !yaPidioPermiso) {
             yaPidioPermiso = true
@@ -116,7 +110,6 @@ fun MapaScreen(
         }
     }
 
-    // El MapView y el GPS siguen el ciclo de vida de la pantalla para no gastar batería en segundo plano.
     DisposableEffect(ciclo, vistaMapa, capaUbicacion, permisoConcedido) {
         val observador = LifecycleEventObserver { _, evento ->
             when (evento) {
@@ -144,7 +137,6 @@ fun MapaScreen(
     val textoBuscando = stringResource(R.string.mapa_buscando_ubicacion)
     val rutaElegida = estado.rutaSeleccionada
 
-    // Al elegir una ruta, el mapa se acerca para que se vea completa.
     LaunchedEffect(rutaElegida?.ruta?.id) {
         val paradas = rutaElegida?.puntos.orEmpty()
         if (paradas.size >= 2) {
@@ -165,6 +157,7 @@ fun MapaScreen(
             modifier = Modifier.fillMaxSize()
         )
 
+        // CHIPS SUPERIORES (Rutas)
         if (estado.rutas.isNotEmpty()) {
             LazyRow(
                 modifier = Modifier
@@ -193,28 +186,47 @@ fun MapaScreen(
             }
         }
 
-        FloatingActionButton(
-            onClick = {
-                if (!permisoConcedido) {
-                    lanzadorPermiso.launch(PERMISOS_UBICACION)
-                } else {
-                    val ubicacion = capaUbicacion.myLocation
-                    if (ubicacion != null) {
-                        vistaMapa.controller.setZoom(ZOOM_AL_CENTRAR)
-                        vistaMapa.controller.animateTo(ubicacion)
+        // CONTENEDOR INFERIOR PARA LOS BOTONES FLOTANTES
+        Row(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Bottom
+        ) {
+            // NUEVO: BOTÓN DEL CATÁLOGO DE QR (A la izquierda)
+            ExtendedFloatingActionButton(
+                onClick = { onVerCatalogoClick() },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = Color.White
+            ) {
+                Icon(Icons.Default.QrCodeScanner, contentDescription = "Ver catálogo")
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Catálogo QR", fontWeight = FontWeight.Bold)
+            }
+
+            // BOTÓN ORIGINAL DEL GPS (A la derecha)
+            FloatingActionButton(
+                onClick = {
+                    if (!permisoConcedido) {
+                        lanzadorPermiso.launch(PERMISOS_UBICACION)
                     } else {
-                        Toast.makeText(contexto, textoBuscando, Toast.LENGTH_SHORT).show()
+                        val ubicacion = capaUbicacion.myLocation
+                        if (ubicacion != null) {
+                            vistaMapa.controller.setZoom(ZOOM_AL_CENTRAR)
+                            vistaMapa.controller.animateTo(ubicacion)
+                        } else {
+                            Toast.makeText(contexto, textoBuscando, Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
-            },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Filled.MyLocation,
-                contentDescription = stringResource(R.string.mapa_mi_ubicacion)
-            )
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.MyLocation,
+                    contentDescription = stringResource(R.string.mapa_mi_ubicacion)
+                )
+            }
         }
     }
 }
@@ -226,9 +238,7 @@ private fun tienePermisoUbicacion(contexto: Context): Boolean =
 
 private fun crearMapView(contexto: Context): MapView {
     val config = Configuration.getInstance()
-    // Los servidores de OpenStreetMap exigen identificar la app; sin esto bloquean las teselas.
     config.userAgentValue = USER_AGENT
-    // Caché de teselas en el almacenamiento interno de la app (no requiere permisos de archivos).
     val base = File(contexto.cacheDir, CARPETA_CACHE)
     config.osmdroidBasePath = base
     config.osmdroidTileCache = File(base, "tiles")
@@ -236,12 +246,9 @@ private fun crearMapView(contexto: Context): MapView {
     return MapView(contexto).apply {
         setTileSource(TileSourceFactory.MAPNIK)
         setMultiTouchControls(true)
-        // Teselas más grandes en pantallas de alta densidad: se leen mejor al aire libre.
         setTilesScaledToDpi(true)
         controller.setZoom(ZOOM_INICIAL)
         controller.setCenter(CENTRO_SANTIAGO)
-        // Atribución obligatoria: muestra "© OpenStreetMap contributors" sobre el mapa.
-        // Va abajo a la izquierda para que el botón flotante (abajo a la derecha) no la tape.
         overlays.add(
             CopyrightOverlay(contexto).apply {
                 setAlignBottom(true)
@@ -251,10 +258,6 @@ private fun crearMapView(contexto: Context): MapView {
     }
 }
 
-/**
- * Reemplaza los marcadores del mapa por los de [puntos], sin tocar la capa de ubicación.
- * Los puntos ya completados se dibujan en verde; el resto conserva el color por defecto.
- */
 private fun mostrarMarcadores(
     mapa: MapView,
     puntos: List<PuntoConEstado>,
@@ -262,7 +265,6 @@ private fun mostrarMarcadores(
     contexto: Context
 ) {
     mapa.overlays.removeAll { capa -> capa is Marker }
-    // Con una ruta elegida, cada parada lleva su número de visita en el título.
     val ordenPorPunto = ruta?.puntos?.withIndex()?.associate { (i, p) -> p.punto.id to i + 1 }.orEmpty()
     puntos.forEach { estado ->
         val punto = estado.punto
@@ -284,7 +286,6 @@ private fun mostrarMarcadores(
             ) + "\n" + textoEstado
             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
             if (estado.completado) {
-                // mutate() evita teñir también los marcadores pendientes, que comparten el mismo dibujo.
                 icon = icon?.mutate()?.also { it.setTint(COLOR_COMPLETADO) }
             }
         }
@@ -293,7 +294,6 @@ private fun mostrarMarcadores(
     mapa.invalidate()
 }
 
-/** Dibuja (o quita) la línea de la ruta elegida, uniendo sus paradas en orden. */
 private fun mostrarRuta(mapa: MapView, ruta: RutaConPuntos?) {
     mapa.overlays.removeAll { capa -> capa is Polyline }
     val paradas = ruta?.puntos.orEmpty()
@@ -303,7 +303,6 @@ private fun mostrarRuta(mapa: MapView, ruta: RutaConPuntos?) {
             outlinePaint.color = COLOR_RUTA
             outlinePaint.strokeWidth = ANCHO_LINEA_RUTA
         }
-        // Índice 0: la línea queda debajo de los marcadores y de la ubicación del usuario.
         mapa.overlays.add(0, linea)
     }
     mapa.invalidate()

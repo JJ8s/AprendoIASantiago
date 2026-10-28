@@ -46,6 +46,8 @@ import com.example.aprendoiasantiago.ui.viewmodels.AdminViewModel
 import com.example.aprendoiasantiago.data.local.DatosEjemplo
 import com.example.aprendoiasantiago.ui.gencont.GenContScreen
 import com.example.aprendoiasantiago.ui.viewmodels.GenContViewModel
+import com.example.aprendoiasantiago.ui.screens.ProgresoScreen // <-- IMPORT NUEVA PANTALLA
+import com.example.aprendoiasantiago.ui.screens.CatalogoScreen
 
 @Composable
 fun AppNavigation(contenedor: AppContainer) {
@@ -142,7 +144,6 @@ fun AppNavigation(contenedor: AppContainer) {
             }
 
             // 3. PANEL DE ADMINISTRADOR
-            // 3. PANEL DE ADMINISTRADOR COMPLETO
             composable("ruta_admin") {
                 val viewModel: AdminViewModel = viewModel(factory = fabrica)
                 val usuarios by viewModel.usuarios.collectAsStateWithLifecycle()
@@ -189,6 +190,7 @@ fun AppNavigation(contenedor: AppContainer) {
                 )
             }
 
+            // 5. DASHBOARD PRINCIPAL
             composable(Destino.INICIO.ruta) {
                 val viewModel: PerfilViewModel = viewModel(factory = fabrica)
                 val estado by viewModel.estado.collectAsStateWithLifecycle()
@@ -197,19 +199,23 @@ fun AppNavigation(contenedor: AppContainer) {
                     estado = estado,
                     onIrAMapa = { navegarAPestana(Destino.MAPA) },
                     onIrAEscaner = { navegarAPestana(Destino.ESCANER) },
-                    onIrAColeccion = { navegarAPestana(Destino.COLECCION) }
+                    onIrAColeccion = { navegarAPestana(Destino.COLECCION) },
+                    onVerProgresoClick = { navController.navigate("progreso") } // <-- ENLACE A NUEVA PANTALLA
                 )
             }
 
+            // 6. PANTALLA DE MAPA
             composable(Destino.MAPA.ruta) {
                 val viewModel: MapaViewModel = viewModel(factory = fabrica)
                 val estado by viewModel.estado.collectAsStateWithLifecycle()
                 MapaScreen(
                     estado = estado,
-                    onSeleccionarRuta = viewModel::seleccionarRuta
+                    onSeleccionarRuta = viewModel::seleccionarRuta,
+                    onVerCatalogoClick = { navController.navigate("catalogo") } // <--- ESTO CONECTA EL BOTÓN
                 )
             }
 
+            // 7. PANTALLA DE ESCÁNER QR
             composable(Destino.ESCANER.ruta) {
                 val viewModel: EscanerViewModel = viewModel(factory = fabrica)
                 val estado by viewModel.estado.collectAsStateWithLifecycle()
@@ -222,6 +228,7 @@ fun AppNavigation(contenedor: AppContainer) {
                 )
             }
 
+            // 8. PANTALLA DE EVIDENCIA (SELFIE)
             composable(
                 route = RUTA_EVIDENCIA,
                 arguments = listOf(navArgument(ARG_CAPSULA_ID) { type = NavType.LongType })
@@ -238,6 +245,7 @@ fun AppNavigation(contenedor: AppContainer) {
                 )
             }
 
+            // 9. PANTALLA DE COLECCIÓN
             composable(Destino.COLECCION.ruta) {
                 val viewModel: PerfilViewModel = viewModel(factory = fabrica)
                 val estado by viewModel.estado.collectAsStateWithLifecycle()
@@ -249,6 +257,7 @@ fun AppNavigation(contenedor: AppContainer) {
                 )
             }
 
+            // 10. PANTALLA DE CÁPSULA (REPRODUCTOR DE VIDEO)
             composable(
                 route = RUTA_CAPSULA,
                 arguments = listOf(navArgument(ARG_CAPSULA_ID) { type = NavType.LongType })
@@ -267,6 +276,7 @@ fun AppNavigation(contenedor: AppContainer) {
                 )
             }
 
+            // 11. PANTALLA DE PERFIL
             composable(Destino.PERFIL.ruta) {
                 val viewModel: PerfilViewModel = viewModel(factory = fabrica)
                 val estado by viewModel.estado.collectAsStateWithLifecycle()
@@ -279,6 +289,38 @@ fun AppNavigation(contenedor: AppContainer) {
                             launchSingleTop = true
                         }
                     }
+                )
+            }
+
+            // 12. NUEVA PANTALLA: PUNTAJE Y PROGRESO
+            composable("progreso") {
+                // Instanciamos el ViewModel del perfil para obtener estadísticas actualizadas
+                val viewModel: PerfilViewModel = viewModel(factory = fabrica)
+                val estado by viewModel.estado.collectAsStateWithLifecycle()
+
+                val puntajeActual = estado.usuario?.puntaje ?: 0
+                val qrTotales = estado.completadas
+
+                ProgresoScreen(
+                    puntosTotales = puntajeActual,
+                    qrEncontrados = qrTotales,
+                    videosVistos = qrTotales, // Se asume un video visto por cada QR escaneado
+                    selfiesTomadas = estado.selfiesTomadas, // Usa estado.selfiesTomadas si lo tienes, o qrTotales como respaldo
+                    puntosDescubiertos = qrTotales,
+                    totalPuntosMapa = if (estado.totalCapsulas > 0) estado.totalCapsulas else 7,
+                    onBackClick = { navController.popBackStack() }
+                )
+            }
+            // 13. NUEVA PANTALLA: CATÁLOGO DE LUGARES Y QR
+            composable("catalogo") {
+                // Reutilizamos el ViewModel del perfil porque ya tiene la lista "progreso" cruzada lista para usar
+                val viewModel: PerfilViewModel = viewModel(factory = fabrica)
+                val estado by viewModel.estado.collectAsStateWithLifecycle()
+
+                CatalogoScreen(
+                    progreso = estado.progreso, // Aquí vienen los estados (completada: true/false)
+                    puntos = estado.puntos,     // Aquí vienen los nombres de las plazas/cerros
+                    onBackClick = { navController.popBackStack() }
                 )
             }
         }
