@@ -1,5 +1,6 @@
 package com.example.aprendoiasantiago.ui.inicio
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.Button
@@ -26,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.aprendoiasantiago.ui.viewmodels.PerfilUiState
@@ -36,6 +39,7 @@ fun InicioScreen(
     onIrAMapa: () -> Unit,
     onIrAEscaner: () -> Unit,
     onIrAColeccion: () -> Unit,
+    onVerProgresoClick: () -> Unit, // <--- NUEVO: Evento para abrir la Pantalla 12
     modifier: Modifier = Modifier
 ) {
     // 1. Extraemos los datos del usuario desde el estado (si aún carga, usamos valores por defecto)
@@ -102,9 +106,12 @@ fun InicioScreen(
             )
         }
 
-        // --- SECCIÓN DE PROGRESO ---
+        // --- SECCIÓN DE PROGRESO (AHORA ES CLICKEABLE) ---
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(MaterialTheme.shapes.medium)
+                .clickable { onVerProgresoClick() }, // <--- NUEVO: Al tocar abre la Pantalla 12
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface
             ),
@@ -123,19 +130,27 @@ fun InicioScreen(
                         text = "Tu progreso",
                         style = MaterialTheme.typography.titleMedium
                     )
-                    Text(
-                        text = "$porcentaje%",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "$porcentaje%",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Icon( // <--- NUEVO: Flecha para indicar que es un botón
+                            imageVector = Icons.Default.ChevronRight,
+                            contentDescription = "Ver detalle de progreso",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
 
                 LinearProgressIndicator(
                     progress = { progreso },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(12.dp),
+                        .height(12.dp)
+                        .clip(MaterialTheme.shapes.small), // <--- NUEVO: Bordes redondeados en la barra
                     color = MaterialTheme.colorScheme.primary
                 )
 
@@ -220,9 +235,6 @@ fun InicioScreen(
     }
 }
 
-/**
- * Componente reutilizable para dibujar cada cajita de estadística del Dashboard.
- */
 @Composable
 private fun TarjetaEstadistica(
     valor: String,
