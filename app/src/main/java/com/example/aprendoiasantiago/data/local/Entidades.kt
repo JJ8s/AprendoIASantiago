@@ -1,5 +1,6 @@
 package com.example.aprendoiasantiago.data.local
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -15,7 +16,44 @@ data class UsuarioEntity(
     /** SHA-256 de la contraseña. Vacío = usuario sin acceso (solo aparece en el ranking). */
     val claveHash: String,
     val nombreVisible: String,
-    val puntaje: Int = 0
+    val puntaje: Int = 0,
+    // --- Perfil y configuración (BD v4) ---
+    @ColumnInfo(defaultValue = "''") val correo: String = "",
+    @ColumnInfo(defaultValue = "''") val telefono: String = "",
+    /** Avatar prediseñado elegido (índice en la lista de íconos de la app). */
+    @ColumnInfo(defaultValue = "0") val avatarIndice: Int = 0,
+    /** Foto de avatar propia (`file://...` en el almacenamiento privado). Si existe, manda sobre [avatarIndice]. */
+    val avatarUri: String? = null,
+    @ColumnInfo(defaultValue = "1") val notifRecordatorios: Boolean = true,
+    @ColumnInfo(defaultValue = "1") val notifNuevosPuntos: Boolean = true,
+    @ColumnInfo(defaultValue = "1") val notifLogros: Boolean = true,
+    /** Interruptores propios de la app (Android no deja revocar permisos por código; ver pantalla Permisos). */
+    @ColumnInfo(defaultValue = "1") val permitirUbicacion: Boolean = true,
+    @ColumnInfo(defaultValue = "1") val permitirCamara: Boolean = true
+)
+
+/** Bandeja de notificaciones de un jugador (Pantalla 14). Se borra junto con el usuario. */
+@Entity(
+    tableName = "notificaciones",
+    foreignKeys = [
+        ForeignKey(
+            entity = UsuarioEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["usuarioId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [Index(value = ["usuarioId"])]
+)
+data class NotificacionEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val usuarioId: Long,
+    val titulo: String,
+    val mensaje: String,
+    /** Nombre de [com.example.aprendoiasantiago.domain.TipoNotificacion]. */
+    val tipo: String,
+    val fechaMillis: Long,
+    val leida: Boolean = false
 )
 
 @Entity(tableName = "puntos_turisticos")

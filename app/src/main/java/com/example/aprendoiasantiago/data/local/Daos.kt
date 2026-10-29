@@ -36,6 +36,49 @@ interface UsuarioDao {
     /** Permite registrar un nuevo jugador local en SQLite (Pantalla 2). Devuelve -1 si el alias ya existe. */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertarJugador(usuario: UsuarioEntity): Long
+
+    @Query("DELETE FROM usuarios WHERE id = :id")
+    suspend fun eliminarPorId(id: Long)
+
+    @Query("SELECT * FROM usuarios WHERE id = :id")
+    suspend fun buscarPorId(id: Long): UsuarioEntity?
+
+    @Query("UPDATE usuarios SET nombreVisible = :nombre, correo = :correo, telefono = :telefono WHERE id = :id")
+    suspend fun actualizarDatos(id: Long, nombre: String, correo: String, telefono: String)
+
+    @Query("UPDATE usuarios SET claveHash = :claveHash WHERE id = :id")
+    suspend fun actualizarClave(id: Long, claveHash: String)
+
+    /** Elegir un avatar prediseñado quita la foto propia. */
+    @Query("UPDATE usuarios SET avatarIndice = :indice, avatarUri = NULL WHERE id = :id")
+    suspend fun actualizarAvatarIndice(id: Long, indice: Int)
+
+    @Query("UPDATE usuarios SET avatarUri = :uri WHERE id = :id")
+    suspend fun actualizarAvatarUri(id: Long, uri: String?)
+
+    @Query(
+        "UPDATE usuarios SET notifRecordatorios = :recordatorios, notifNuevosPuntos = :nuevosPuntos, " +
+            "notifLogros = :logros WHERE id = :id"
+    )
+    suspend fun actualizarNotificaciones(id: Long, recordatorios: Boolean, nuevosPuntos: Boolean, logros: Boolean)
+
+    @Query("UPDATE usuarios SET permitirUbicacion = :ubicacion, permitirCamara = :camara WHERE id = :id")
+    suspend fun actualizarPermisos(id: Long, ubicacion: Boolean, camara: Boolean)
+}
+
+@Dao
+interface NotificacionDao {
+    @Query("SELECT * FROM notificaciones WHERE usuarioId = :usuarioId ORDER BY fechaMillis DESC, id DESC")
+    fun observar(usuarioId: Long): Flow<List<NotificacionEntity>>
+
+    @Insert
+    suspend fun insertar(notificacion: NotificacionEntity): Long
+
+    @Query("UPDATE notificaciones SET leida = 1 WHERE usuarioId = :usuarioId")
+    suspend fun marcarTodasLeidas(usuarioId: Long)
+
+    @Query("DELETE FROM notificaciones WHERE usuarioId = :usuarioId")
+    suspend fun borrarTodas(usuarioId: Long)
 }
 
 @Dao
@@ -49,6 +92,12 @@ interface PuntoDao {
     /** Inserta o actualiza (sin borrar la fila, así no se pierde el progreso asociado). */
     @Upsert
     suspend fun guardarTodos(puntos: List<PuntoTuristicoEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun guardarPunto(punto: PuntoTuristicoEntity)
+
+    @Query("DELETE FROM puntos_turisticos WHERE id = :id")
+    suspend fun eliminarPunto(id: Long)
 }
 
 @Dao
@@ -69,6 +118,12 @@ interface CapsulaDao {
     /** Inserta o actualiza (sin borrar la fila, así no se pierde el progreso asociado). */
     @Upsert
     suspend fun guardarTodas(capsulas: List<CapsulaEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun guardarCapsula(capsula: CapsulaEntity)
+
+    @Query("DELETE FROM capsulas WHERE id = :id")
+    suspend fun eliminarCapsula(id: Long)
 }
 
 @Dao

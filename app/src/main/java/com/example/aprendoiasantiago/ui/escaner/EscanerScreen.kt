@@ -50,6 +50,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.aprendoiasantiago.R
+import com.example.aprendoiasantiago.ui.components.CamaraPausada
 import com.example.aprendoiasantiago.data.repository.ResultadoEscaneo
 import com.example.aprendoiasantiago.ui.viewmodels.EscanerUiState
 
@@ -60,7 +61,10 @@ fun EscanerScreen(
     onEscanearOtro: () -> Unit,
     onVerCapsula: (Long) -> Unit,
     onTomarEvidencia: (Long) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    /** `false` si el jugador apagó la cámara en Perfil → Permisos. */
+    camaraPermitida: Boolean = true,
+    onIrAPermisos: () -> Unit = {}
 ) {
     val contexto = LocalContext.current
     val ciclo = LocalLifecycleOwner.current.lifecycle
@@ -73,7 +77,7 @@ fun EscanerScreen(
 
     // Pide el permiso una sola vez al abrir la pantalla (el caso exige el uso de la cámara).
     LaunchedEffect(Unit) {
-        if (!permisoConcedido && !yaPidioPermiso) {
+        if (camaraPermitida && !permisoConcedido && !yaPidioPermiso) {
             yaPidioPermiso = true
             lanzadorPermiso.launch(Manifest.permission.CAMERA)
         }
@@ -105,7 +109,7 @@ fun EscanerScreen(
     }
 
     Box(modifier = modifier.fillMaxSize()) {
-        if (permisoConcedido) {
+        if (permisoConcedido && camaraPermitida) {
             VistaCamara(
                 escaneando = estado.escaneando,
                 onCodigoDetectado = onCodigoDetectado,
@@ -132,6 +136,8 @@ fun EscanerScreen(
                     modifier = Modifier.padding(12.dp)
                 )
             }
+        } else if (!camaraPermitida) {
+            CamaraPausada(onIrAPermisos = onIrAPermisos, modifier = Modifier.align(Alignment.Center))
         } else {
             SinPermisoCamara(
                 onPermitir = { lanzadorPermiso.launch(Manifest.permission.CAMERA) },

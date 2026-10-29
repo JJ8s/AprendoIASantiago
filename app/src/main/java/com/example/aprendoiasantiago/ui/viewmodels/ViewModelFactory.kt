@@ -14,7 +14,12 @@ class ViewModelFactory(private val contenedor: AppContainer) : ViewModelProvider
         modelClass.isAssignableFrom(MapaViewModel::class.java) ->
             MapaViewModel(contenedor.juego, contenedor.sesion)
         modelClass.isAssignableFrom(EscanerViewModel::class.java) ->
-            EscanerViewModel(contenedor.juego, contenedor.sesion, contenedor.ubicacion)
+            EscanerViewModel(
+                contenedor.juego,
+                contenedor.sesion,
+                contenedor.ubicacion,
+                contenedor.notificaciones
+            )
         modelClass.isAssignableFrom(EvidenciaViewModel::class.java) ->
             EvidenciaViewModel(
                 contenedor.juego,
@@ -26,6 +31,23 @@ class ViewModelFactory(private val contenedor: AppContainer) : ViewModelProvider
             CapsulaViewModel(contenedor.juego)
         modelClass.isAssignableFrom(PerfilViewModel::class.java) ->
             PerfilViewModel(contenedor.juego, contenedor.sesion)
+
+        modelClass.isAssignableFrom(AjustesPerfilViewModel::class.java) ->
+            AjustesPerfilViewModel(
+                contenedor.perfil,
+                contenedor.notificaciones,
+                contenedor.sesion,
+                contenedor.almacenAvatares
+            )
+
+        // --- PANEL DE ADMINISTRADOR ---
+        modelClass.isAssignableFrom(AdminViewModel::class.java) ->
+            AdminViewModel(contenedor.auth, contenedor.juego, contenedor.sesion)
+
+        // --- PANEL DE CREADOR DE CONTENIDO ---
+        modelClass.isAssignableFrom(GenContViewModel::class.java) ->
+            GenContViewModel(contenedor.juego, contenedor.sesion)
+
         else -> throw IllegalArgumentException("ViewModel desconocido: ${modelClass.name}")
     } as T
 }

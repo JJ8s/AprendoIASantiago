@@ -31,7 +31,8 @@ class AuthRepository(
     suspend fun registrarJugador(
         nombreVisible: String,
         alias: String,
-        clave: String
+        clave: String,
+        avatarIndice: Int = 0
     ): UsuarioEntity? {
         sembradoListo.await()
         val aliasLimpio = alias.trim()
@@ -42,7 +43,8 @@ class AuthRepository(
                 nombreUsuario = aliasLimpio,
                 claveHash = Hash.sha256(clave),
                 nombreVisible = nombreLimpio,
-                puntaje = 0
+                puntaje = 0,
+                avatarIndice = avatarIndice
             )
         )
         // En Room, si OnConflictStrategy.IGNORE detecta un alias repetido, devuelve -1L
@@ -53,4 +55,13 @@ class AuthRepository(
             claveHash = Hash.sha256(clave)
         )
     }
+
+    /** Elimina un jugador de la base de datos por su ID (Panel Admin) */
+    suspend fun eliminarJugador(id: Long) {
+        usuarioDao.eliminarPorId(id)
+
+    }
+
+
+
 }

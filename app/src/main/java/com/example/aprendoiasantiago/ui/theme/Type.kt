@@ -6,42 +6,39 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-// Textos algo más grandes y con más peso de lo normal para leerse al aire libre.
+// Escala tipográfica al estilo iOS (título grande, cuerpo de 17 sp, notas de 13 sp).
+// No se puede usar la fuente SF de Apple (licencia), así que se usa la del sistema Android.
+private val Fuente = FontFamily.SansSerif
+
 val Typography = Typography(
     headlineMedium = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Bold,
-        fontSize = 28.sp,
-        lineHeight = 36.sp
+        fontFamily = Fuente, fontWeight = FontWeight.Bold, fontSize = 28.sp, lineHeight = 34.sp
     ),
     titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Bold,
-        fontSize = 24.sp,
-        lineHeight = 30.sp
+        fontFamily = Fuente, fontWeight = FontWeight.Bold, fontSize = 30.sp, lineHeight = 36.sp
     ),
     titleMedium = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 20.sp,
-        lineHeight = 26.sp
+        fontFamily = Fuente, fontWeight = FontWeight.SemiBold, fontSize = 20.sp, lineHeight = 26.sp
+    ),
+    titleSmall = TextStyle(
+        fontFamily = Fuente, fontWeight = FontWeight.SemiBold, fontSize = 17.sp, lineHeight = 22.sp
     ),
     bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 18.sp,
-        lineHeight = 26.sp
+        fontFamily = Fuente, fontWeight = FontWeight.Normal, fontSize = 17.sp, lineHeight = 24.sp
     ),
     bodyMedium = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 22.sp
+        fontFamily = Fuente, fontWeight = FontWeight.Normal, fontSize = 16.sp, lineHeight = 22.sp
+    ),
+    bodySmall = TextStyle(
+        fontFamily = Fuente, fontWeight = FontWeight.Normal, fontSize = 14.sp, lineHeight = 19.sp
     ),
     labelLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 16.sp,
-        lineHeight = 20.sp
+        fontFamily = Fuente, fontWeight = FontWeight.SemiBold, fontSize = 17.sp, lineHeight = 22.sp
+    ),
+    labelMedium = TextStyle(
+        fontFamily = Fuente, fontWeight = FontWeight.Medium, fontSize = 14.sp, lineHeight = 18.sp
+    ),
+    labelSmall = TextStyle(
+        fontFamily = Fuente, fontWeight = FontWeight.Medium, fontSize = 12.sp, lineHeight = 16.sp
     )
 )

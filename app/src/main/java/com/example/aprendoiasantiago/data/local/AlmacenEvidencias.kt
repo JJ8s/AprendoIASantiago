@@ -22,6 +22,13 @@ class AlmacenEvidencias(private val directorio: File) {
         return Uri.fromFile(archivo).toString()
     }
 
+    /** Borra una foto guardada antes. Solo toca archivos dentro de este directorio. */
+    fun borrar(uri: String) {
+        val ruta = Uri.parse(uri).path ?: return
+        val archivo = File(ruta)
+        if (archivo.canonicalFile.parentFile == directorio.canonicalFile) archivo.delete()
+    }
+
     private companion object {
         const val CALIDAD_JPEG = 85
     }

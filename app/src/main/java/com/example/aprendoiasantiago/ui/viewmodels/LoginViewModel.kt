@@ -138,7 +138,8 @@ class LoginViewModel(
                 val nuevoUsuario = auth.registrarJugador(
                     nombreVisible = actual.nombreVisibleRegistro,
                     alias = actual.usuario,
-                    clave = actual.clave
+                    clave = actual.clave,
+                    avatarIndice = actual.avatarSeleccionado
                 )
                 if (nuevoUsuario == null) {
                     _estado.update {

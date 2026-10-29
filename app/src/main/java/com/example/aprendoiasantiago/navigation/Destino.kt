@@ -25,6 +25,12 @@ const val RUTA_EVIDENCIA = "evidencia/{$ARG_CAPSULA_ID}"
 
 fun rutaEvidencia(capsulaId: Long): String = "evidencia/$capsulaId"
 
+/** Pantallas que se abren desde Perfil (no son pestañas, así que la barra inferior se oculta). */
+const val RUTA_PERFIL_EDITAR = "perfil/editar"
+const val RUTA_PERFIL_NOTIFICACIONES = "perfil/notificaciones"
+const val RUTA_PERFIL_PERMISOS = "perfil/permisos"
+const val RUTA_PERFIL_AYUDA = "perfil/ayuda"
+
 /** Pestañas de la barra inferior: cada una reúne su ruta, su título y su ícono en un solo lugar. */
 enum class Destino(
     val ruta: String,

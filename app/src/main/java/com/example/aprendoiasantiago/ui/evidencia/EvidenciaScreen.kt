@@ -47,6 +47,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.aprendoiasantiago.R
+import com.example.aprendoiasantiago.ui.components.CamaraPausada
 import com.example.aprendoiasantiago.ui.viewmodels.ErrorEvidencia
 import com.example.aprendoiasantiago.ui.viewmodels.EvidenciaUiState
 import com.example.aprendoiasantiago.ui.viewmodels.PasoEvidencia
@@ -57,7 +58,9 @@ fun EvidenciaScreen(
     onFotoCapturada: (android.graphics.Bitmap) -> Unit,
     onErrorCaptura: () -> Unit,
     onVolver: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    camaraPermitida: Boolean = true,
+    onIrAPermisos: () -> Unit = {}
 ) {
     Column(modifier = modifier.fillMaxSize()) {
         IconButton(onClick = onVolver, modifier = Modifier.padding(4.dp)) {
@@ -81,6 +84,10 @@ fun EvidenciaScreen(
             }
 
             estado.paso == PasoEvidencia.LISTO -> EvidenciaCompleta(estado.capsula.titulo, onVolver)
+
+            !camaraPermitida -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CamaraPausada(onIrAPermisos = onIrAPermisos)
+            }
 
             else -> PasoConCamara(estado, onFotoCapturada, onErrorCaptura)
         }

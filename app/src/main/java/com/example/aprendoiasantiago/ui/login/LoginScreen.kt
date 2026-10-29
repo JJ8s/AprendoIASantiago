@@ -20,12 +20,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.EmojiEvents
-import androidx.compose.material.icons.filled.Explore
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
-import androidx.compose.material.icons.filled.RocketLaunch
-import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -56,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import com.example.aprendoiasantiago.R
 import com.example.aprendoiasantiago.data.local.DatosEjemplo
 import com.example.aprendoiasantiago.data.local.UsuarioEntity
+import com.example.aprendoiasantiago.ui.components.ICONOS_AVATAR
 import com.example.aprendoiasantiago.domain.ErrorLogin
 import com.example.aprendoiasantiago.ui.viewmodels.LoginUiState
 
@@ -75,13 +71,7 @@ fun LoginScreen(
 ) {
     var claveVisible by rememberSaveable { mutableStateOf(false) }
     var confirmacionVisible by rememberSaveable { mutableStateOf(false) }
-    val iconosAvatar = listOf(
-        Icons.Filled.Person,
-        Icons.Filled.Explore,
-        Icons.Filled.RocketLaunch,
-        Icons.Filled.EmojiEvents,
-        Icons.Filled.School
-    )
+    val iconosAvatar = ICONOS_AVATAR
 
     Column(
         modifier = modifier

@@ -88,7 +88,9 @@ private val PERMISOS_UBICACION = arrayOf(
 fun MapaScreen(
     estado: MapaUiState,
     onSeleccionarRuta: (Long) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    /** `false` si el jugador apagó la ubicación en Perfil → Permisos. */
+    ubicacionPermitida: Boolean = true
 ) {
     val contexto = LocalContext.current
     val ciclo = LocalLifecycleOwner.current.lifecycle
@@ -100,17 +102,19 @@ fun MapaScreen(
         }
     }
 
-    var permisoConcedido by remember { mutableStateOf(tienePermisoUbicacion(contexto)) }
+    var permisoSistema by remember { mutableStateOf(tienePermisoUbicacion(contexto)) }
+    // El permiso "efectivo" exige además que el jugador no haya apagado la ubicación en su perfil.
+    val permisoConcedido = permisoSistema && ubicacionPermitida
     var yaPidioPermiso by rememberSaveable { mutableStateOf(false) }
     val lanzadorPermiso = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { resultado ->
-        permisoConcedido = resultado.values.any { concedido -> concedido }
+        permisoSistema = resultado.values.any { concedido -> concedido }
     }
 
     // Pide el permiso una sola vez al abrir el mapa (el caso exige acceso a la ubicación).
     LaunchedEffect(Unit) {
-        if (!permisoConcedido && !yaPidioPermiso) {
+        if (ubicacionPermitida && !permisoSistema && !yaPidioPermiso) {
             yaPidioPermiso = true
             lanzadorPermiso.launch(PERMISOS_UBICACION)
         }
@@ -142,6 +146,7 @@ fun MapaScreen(
     }
 
     val textoBuscando = stringResource(R.string.mapa_buscando_ubicacion)
+    val textoDesactivada = stringResource(R.string.mapa_ubicacion_desactivada)
     val rutaElegida = estado.rutaSeleccionada
 
     // Al elegir una ruta, el mapa se acerca para que se vea completa.
@@ -195,7 +200,9 @@ fun MapaScreen(
 
         FloatingActionButton(
             onClick = {
-                if (!permisoConcedido) {
+                if (!ubicacionPermitida) {
+                    Toast.makeText(contexto, textoDesactivada, Toast.LENGTH_SHORT).show()
+                } else if (!permisoConcedido) {
                     lanzadorPermiso.launch(PERMISOS_UBICACION)
                 } else {
                     val ubicacion = capaUbicacion.myLocation
