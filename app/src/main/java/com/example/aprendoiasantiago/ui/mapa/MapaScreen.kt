@@ -82,8 +82,12 @@ private val PERMISOS_UBICACION = arrayOf(
 fun MapaScreen(
     estado: MapaUiState,
     onSeleccionarRuta: (Long) -> Unit,
-    onVerCatalogoClick: () -> Unit = {}, // <-- NUEVO: Evento para abrir el catálogo
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    ubicacionPermitida: Boolean = true,
+    puntoEnfocadoId: Long? = null,
+    onPuntoEnfocado: () -> Unit = {},
+    onAbrirDetalle: (Long) -> Unit = {},
+    onVerCatalogoClick: () -> Unit = {}
 ) {
     val contexto = LocalContext.current
     val ciclo = LocalLifecycleOwner.current.lifecycle
@@ -95,16 +99,17 @@ fun MapaScreen(
         }
     }
 
-    var permisoConcedido by remember { mutableStateOf(tienePermisoUbicacion(contexto)) }
+    var permisoSistema by remember { mutableStateOf(tienePermisoUbicacion(contexto)) }
+    val permisoConcedido = permisoSistema && ubicacionPermitida
     var yaPidioPermiso by rememberSaveable { mutableStateOf(false) }
     val lanzadorPermiso = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { resultado ->
-        permisoConcedido = resultado.values.any { concedido -> concedido }
+        permisoSistema = resultado.values.any { concedido -> concedido }
     }
 
     LaunchedEffect(Unit) {
-        if (!permisoConcedido && !yaPidioPermiso) {
+        if (ubicacionPermitida && !permisoSistema && !yaPidioPermiso) {
             yaPidioPermiso = true
             lanzadorPermiso.launch(PERMISOS_UBICACION)
         }
@@ -135,7 +140,17 @@ fun MapaScreen(
     }
 
     val textoBuscando = stringResource(R.string.mapa_buscando_ubicacion)
+    val textoDesactivada = stringResource(R.string.mapa_ubicacion_desactivada)
     val rutaElegida = estado.rutaSeleccionada
+
+    LaunchedEffect(puntoEnfocadoId, estado.puntos) {
+        val destino = estado.puntos.firstOrNull { it.punto.id == puntoEnfocadoId }?.punto
+        if (destino != null) {
+            vistaMapa.controller.setZoom(ZOOM_AL_CENTRAR)
+            vistaMapa.controller.animateTo(GeoPoint(destino.latitud, destino.longitud))
+            onPuntoEnfocado()
+        }
+    }
 
     LaunchedEffect(rutaElegida?.ruta?.id) {
         val paradas = rutaElegida?.puntos.orEmpty()
@@ -152,12 +167,11 @@ fun MapaScreen(
             factory = { vistaMapa },
             update = { mapa ->
                 mostrarRuta(mapa, rutaElegida)
-                mostrarMarcadores(mapa, estado.puntos, rutaElegida, contexto)
+                mostrarMarcadores(mapa, estado.puntos, rutaElegida, contexto, onAbrirDetalle)
             },
             modifier = Modifier.fillMaxSize()
         )
 
-        // CHIPS SUPERIORES (Rutas)
         if (estado.rutas.isNotEmpty()) {
             LazyRow(
                 modifier = Modifier
@@ -186,7 +200,7 @@ fun MapaScreen(
             }
         }
 
-        // CONTENEDOR INFERIOR PARA LOS BOTONES FLOTANTES
+        // BOTONES INFERIORES: Catálogo QR (Izquierda) + Mi Ubicación (Derecha)
         Row(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -195,7 +209,6 @@ fun MapaScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Bottom
         ) {
-            // NUEVO: BOTÓN DEL CATÁLOGO DE QR (A la izquierda)
             ExtendedFloatingActionButton(
                 onClick = { onVerCatalogoClick() },
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -206,10 +219,11 @@ fun MapaScreen(
                 Text("Catálogo QR", fontWeight = FontWeight.Bold)
             }
 
-            // BOTÓN ORIGINAL DEL GPS (A la derecha)
             FloatingActionButton(
                 onClick = {
-                    if (!permisoConcedido) {
+                    if (!ubicacionPermitida) {
+                        Toast.makeText(contexto, textoDesactivada, Toast.LENGTH_SHORT).show()
+                    } else if (!permisoConcedido) {
                         lanzadorPermiso.launch(PERMISOS_UBICACION)
                     } else {
                         val ubicacion = capaUbicacion.myLocation
@@ -262,7 +276,8 @@ private fun mostrarMarcadores(
     mapa: MapView,
     puntos: List<PuntoConEstado>,
     ruta: RutaConPuntos?,
-    contexto: Context
+    contexto: Context,
+    onAbrirDetalle: (Long) -> Unit
 ) {
     mapa.overlays.removeAll { capa -> capa is Marker }
     val ordenPorPunto = ruta?.puntos?.withIndex()?.associate { (i, p) -> p.punto.id to i + 1 }.orEmpty()
@@ -285,6 +300,10 @@ private fun mostrarMarcadores(
                 punto.altitud
             ) + "\n" + textoEstado
             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            setOnMarkerClickListener { _, _ ->
+                onAbrirDetalle(punto.id)
+                true
+            }
             if (estado.completado) {
                 icon = icon?.mutate()?.also { it.setTint(COLOR_COMPLETADO) }
             }

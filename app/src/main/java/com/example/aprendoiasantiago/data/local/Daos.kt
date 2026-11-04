@@ -1,18 +1,18 @@
 package com.example.aprendoiasantiago.data.local
 
-import com.example.aprendoiasantiago.data.model.UsuarioEntity
-import com.example.aprendoiasantiago.data.model.PuntoTuristicoEntity
-import com.example.aprendoiasantiago.data.model.CapsulaEntity
-import com.example.aprendoiasantiago.data.model.ProgresoEntity
-import com.example.aprendoiasantiago.data.model.RutaEntity
-import com.example.aprendoiasantiago.data.model.RutaPuntoEntity
-
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
+import com.example.aprendoiasantiago.data.model.CapsulaEntity
+import com.example.aprendoiasantiago.data.model.NotificacionEntity
+import com.example.aprendoiasantiago.data.model.ProgresoEntity
+import com.example.aprendoiasantiago.data.model.PuntoTuristicoEntity
+import com.example.aprendoiasantiago.data.model.RutaEntity
+import com.example.aprendoiasantiago.data.model.RutaPuntoEntity
+import com.example.aprendoiasantiago.data.model.UsuarioEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -46,6 +46,46 @@ interface UsuarioDao {
 
     @Query("DELETE FROM usuarios WHERE id = :id")
     suspend fun eliminarPorId(id: Long)
+
+    @Query("SELECT * FROM usuarios WHERE id = :id")
+    suspend fun buscarPorId(id: Long): UsuarioEntity?
+
+    @Query("UPDATE usuarios SET nombreVisible = :nombre, correo = :correo, telefono = :telefono WHERE id = :id")
+    suspend fun actualizarDatos(id: Long, nombre: String, correo: String, telefono: String)
+
+    @Query("UPDATE usuarios SET claveHash = :claveHash WHERE id = :id")
+    suspend fun actualizarClave(id: Long, claveHash: String)
+
+    /** Elegir un avatar prediseñado quita la foto propia. */
+    @Query("UPDATE usuarios SET avatarIndice = :indice, avatarUri = NULL WHERE id = :id")
+    suspend fun actualizarAvatarIndice(id: Long, indice: Int)
+
+    @Query("UPDATE usuarios SET avatarUri = :uri WHERE id = :id")
+    suspend fun actualizarAvatarUri(id: Long, uri: String?)
+
+    @Query(
+        "UPDATE usuarios SET notifRecordatorios = :recordatorios, notifNuevosPuntos = :nuevosPuntos, " +
+                "notifLogros = :logros WHERE id = :id"
+    )
+    suspend fun actualizarNotificaciones(id: Long, recordatorios: Boolean, nuevosPuntos: Boolean, logros: Boolean)
+
+    @Query("UPDATE usuarios SET permitirUbicacion = :ubicacion, permitirCamara = :camara WHERE id = :id")
+    suspend fun actualizarPermisos(id: Long, ubicacion: Boolean, camara: Boolean)
+}
+
+@Dao
+interface NotificacionDao {
+    @Query("SELECT * FROM notificaciones WHERE usuarioId = :usuarioId ORDER BY fechaMillis DESC, id DESC")
+    fun observar(usuarioId: Long): Flow<List<NotificacionEntity>>
+
+    @Insert
+    suspend fun insertar(notificacion: NotificacionEntity): Long
+
+    @Query("UPDATE notificaciones SET leida = 1 WHERE usuarioId = :usuarioId")
+    suspend fun marcarTodasLeidas(usuarioId: Long)
+
+    @Query("DELETE FROM notificaciones WHERE usuarioId = :usuarioId")
+    suspend fun borrarTodas(usuarioId: Long)
 }
 
 @Dao
@@ -133,10 +173,6 @@ abstract class ProgresoDao {
     @Query("UPDATE usuarios SET puntaje = puntaje + :puntos WHERE id = :usuarioId")
     abstract suspend fun sumarPuntos(usuarioId: Long, puntos: Int)
 
-    /**
-     * Marca la cápsula como completada y suma sus puntos, todo o nada (una sola transacción).
-     * Devuelve `true` si era la primera vez; `false` si ya estaba completada (no suma puntos otra vez).
-     */
     @Transaction
     open suspend fun completarCapsula(
         usuarioId: Long,

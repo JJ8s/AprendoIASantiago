@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cancelar">Cancelar</string>
+    <string name="aceptar">Aceptar</string>
+
+    <!-- Perfil (menú) -->
+    <string name="perfil_seccion_resumen">Mi progreso</string>
+    <string name="perfil_dato_puntaje">Puntaje</string>
+    <string name="perfil_dato_capsulas">Cápsulas completadas</string>
+    <string name="perfil_dato_capsulas_valor">%1$d de %2$d</string>
+    <string name="perfil_dato_posicion">Posición en el ranking</string>
+    <string name="perfil_seccion_cuenta">Cuenta</string>
+    <string name="perfil_editar">Editar perfil</string>
+    <string name="perfil_cambiar_foto">Cambiar foto de perfil</string>
+    <string name="perfil_seccion_preferencias">Preferencias</string>
+    <string name="perfil_notificaciones">Notificaciones</string>
+    <string name="perfil_permisos">Permisos</string>
+    <string name="perfil_ayuda">Ayuda y soporte</string>
+    <string name="perfil_cerrar_titulo">¿Cerrar sesión?</string>
+    <string name="perfil_cerrar_texto">Volverás a la pantalla de selección de jugador. Tu progreso queda guardado.</string>
+    <string name="perfil_msg_avatar">Foto de perfil actualizada</string>
+
+    <!-- Editar perfil -->
+    <string name="editar_seccion_datos">Datos personales</string>
+    <string name="editar_nombre">Nombre</string>
+    <string name="editar_alias">Usuario</string>
+    <string name="editar_correo">Correo</string>
+    <string name="editar_telefono">Teléfono</string>
+    <string name="editar_opcional">Opcional</string>
+    <string name="editar_guardar">Guardar cambios</string>
+    <string name="editar_msg_datos">Cambios guardados</string>
+    <string name="editar_seccion_clave">Contraseña</string>
+    <string name="editar_nota_clave">Escribe tu contraseña actual y la nueva dos veces.</string>
+    <string name="editar_clave_actual">Actual</string>
+    <string name="editar_clave_nueva">Nueva</string>
+    <string name="editar_clave_confirmar">Confirmar</string>
+    <string name="editar_cambiar_clave">Cambiar contraseña</string>
+    <string name="editar_msg_clave">Contraseña actualizada</string>
+    <string name="error_perfil_nombre_vacio">Escribe tu nombre.</string>
+    <string name="error_perfil_nombre_largo">El nombre es demasiado largo (máximo 40 letras).</string>
+    <string name="error_perfil_correo">El correo no es válido.</string>
+    <string name="error_perfil_telefono">El teléfono no es válido (entre 8 y 15 dígitos).</string>
+    <string name="error_perfil_clave_actual_vacia">Escribe tu contraseña actual.</string>
+    <string name="error_perfil_clave_actual_mala">La contraseña actual no es correcta.</string>
+    <string name="error_perfil_clave_nueva_vacia">Escribe la nueva contraseña.</string>
+    <string name="error_perfil_clave_igual">La nueva contraseña debe ser distinta de la actual.</string>
+
+    <!-- Avatar -->
+    <string name="avatar_titulo">Foto de perfil</string>
+    <string name="avatar_tomar_foto">Tomar foto</string>
+    <string name="avatar_camara_desactivada">Cámara desactivada (actívala en Permisos)</string>
+    <string name="avatar_galeria">Elegir de la galería</string>
+    <string name="avatar_o_elige">O elige un avatar</string>
+    <string name="avatar_sin_permiso_titulo">Cámara no permitida</string>
+    <string name="avatar_sin_permiso_texto">Sin el permiso de cámara no se puede tomar la foto. Puedes elegir una de la galería o activar el permiso en Ajustes.</string>
+
+    <!-- Notificaciones -->
+    <string name="notif_canal_nombre">Avisos de Aprendo IA</string>
+    <string name="notif_seccion_sistema">Avisos del teléfono</string>
+    <string name="notif_permitir">Permitir notificaciones</string>
+    <string name="notif_activadas">Activadas</string>
+    <string name="notif_desactivadas">Desactivadas</string>
+    <string name="notif_activar">Activar</string>
+    <string name="notif_sistema_nota">Si están desactivadas, los avisos se guardan igual en la bandeja, pero no aparecen en la barra del teléfono.</string>
+    <string name="notif_seccion_tipos">Qué avisos quiero recibir</string>
+    <string name="notif_tipo_recordatorios">Recordatorios</string>
+    <string name="notif_tipo_nuevos_puntos">Nuevos puntos QR</string>
+    <string name="notif_tipo_logros">Logros y puntos</string>
+    <string name="notif_tipos_nota">Esta elección se guarda en tu perfil: cada jugador del teléfono tiene la suya.</string>
+    <string name="notif_enviar_prueba">Enviar aviso de prueba</string>
+    <string name="notif_msg_prueba">Aviso enviado</string>
+    <string name="notif_bandeja">Bandeja</string>
+    <string name="notif_vacia">Aún no tienes notificaciones.</string>
+    <string name="notif_marcar_leidas">Marcar como leídas</string>
+    <string name="notif_vaciar">Vaciar bandeja</string>
+
+    <!-- Permisos -->
+    <string name="permisos_ubicacion">Ubicación</string>
+    <string name="permisos_ubicacion_nota">Se usa para mostrar tu posición en el mapa y guardar dónde completaste cada cápsula.</string>
+    <string name="permisos_camara">Cámara</string>
+    <string name="permisos_camara_nota">Se usa para escanear códigos QR, tomar tus fotos de evidencia y tu foto de perfil.</string>
+    <string name="permisos_usar_en_app">Permitir en Aprendo IA</string>
+    <string name="permisos_estado_sistema">Permiso del teléfono</string>
+    <string name="permisos_concedido">Concedido</string>
+    <string name="permisos_no_concedido">No concedido</string>
+    <string name="permisos_abrir_ajustes">Abrir ajustes del teléfono</string>
+    <string name="permisos_ajustes_nota">Android no permite que una app revoque sus propios permisos. El interruptor pausa su uso dentro de Aprendo IA; para quitarlos del todo, usa los ajustes del teléfono.</string>
+    <string name="permiso_pausado_camara_titulo">Cámara desactivada</string>
+    <string name="permiso_pausado_camara_texto">Apagaste la cámara en tu perfil. Actívala en Perfil → Permisos para escanear.</string>
+    <string name="permiso_pausado_boton">Ir a Permisos</string>
+
+    <string name="mapa_ubicacion_desactivada">Ubicación desactivada en tu perfil (Perfil → Permisos).</string>
+
+    <!-- Ayuda y soporte -->
+    <string name="ayuda_contacto">Contacto</string>
+    <string name="ayuda_enviar_correo">Enviar correo a soporte</string>
+    <string name="ayuda_contacto_nota">Se abrirá tu app de correo con un mensaje listo para %1$s.</string>
+    <string name="ayuda_sin_app_correo">No hay ninguna app de correo instalada en este teléfono.</string>
+    <string name="ayuda_correo_asunto">Ayuda con Aprendo IA Jugando en Santiago</string>
+    <string name="ayuda_correo_cuerpo">Hola, necesito ayuda con la aplicación.\n\nDescribe aquí tu consulta:\n</string>
+    <string name="ayuda_faq">Preguntas frecuentes</string>
+    <string name="ayuda_p1">¿Cómo gano puntos?</string>
+    <string name="ayuda_r1">Escanea el código QR de un punto turístico. Cada cápsula nueva suma sus puntos una sola vez.</string>
+    <string name="ayuda_p2">¿Dónde se guardan mis datos?</string>
+    <string name="ayuda_r2">Solo en este teléfono, en una base de datos local. No se envía nada a internet.</string>
+    <string name="ayuda_p3">El mapa o el escáner no funcionan</string>
+    <string name="ayuda_r3">Revisa en Perfil → Permisos que la ubicación y la cámara estén activadas y concedidas.</string>
+</resources>
