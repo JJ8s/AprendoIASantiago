@@ -1,5 +1,6 @@
 package com.example.aprendoiasantiago.ui.capsula
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,7 +32,7 @@ import androidx.media3.ui.PlayerView
 import com.example.aprendoiasantiago.R
 
 /**
- * Reproduce un video por internet con Media3 (ExoPlayer) y controles estándar.
+ * Reproduce un video guardado localmente o por internet con Media3 (ExoPlayer).
  * Se pausa al salir de la pantalla y libera el reproductor al desaparecer de la composición.
  */
 @Composable
@@ -42,7 +43,9 @@ fun ReproductorVideo(url: String, modifier: Modifier = Modifier) {
 
     val reproductor = remember(url) {
         ExoPlayer.Builder(contexto).build().apply {
-            setMediaItem(MediaItem.fromUri(url))
+            // Aseguramos que cargue la URI sin fallar, sea web o local
+            val mediaItem = MediaItem.fromUri(Uri.parse(url))
+            setMediaItem(mediaItem)
             prepare()
             playWhenReady = true
         }
