@@ -50,6 +50,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.aprendoiasantiago.R
+import com.example.aprendoiasantiago.ui.components.CamaraPausada
 import com.example.aprendoiasantiago.data.repository.ResultadoEscaneo
 import com.example.aprendoiasantiago.ui.viewmodels.EscanerUiState
 
@@ -60,7 +61,9 @@ fun EscanerScreen(
     onEscanearOtro: () -> Unit,
     onVerCapsula: (Long) -> Unit,
     onTomarEvidencia: (Long) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    camaraPermitida: Boolean = true,
+    onIrAPermisos: () -> Unit = {}
 ) {
     val contexto = LocalContext.current
     val ciclo = LocalLifecycleOwner.current.lifecycle
@@ -72,8 +75,8 @@ fun EscanerScreen(
     ) { concedido -> permisoConcedido = concedido }
 
     // Pide el permiso una sola vez al abrir la pantalla (el caso exige el uso de la cámara).
-    LaunchedEffect(Unit) {
-        if (!permisoConcedido && !yaPidioPermiso) {
+    LaunchedEffect(camaraPermitida) {
+        if (camaraPermitida && !permisoConcedido && !yaPidioPermiso) {
             yaPidioPermiso = true
             lanzadorPermiso.launch(Manifest.permission.CAMERA)
         }
@@ -84,8 +87,8 @@ fun EscanerScreen(
     val lanzadorUbicacion = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { /* Si la rechaza, la cápsula se completa igual, solo que sin ubicación guardada. */ }
-    LaunchedEffect(permisoConcedido) {
-        if (permisoConcedido && !yaPidioUbicacion && !tienePermisoUbicacion(contexto)) {
+    LaunchedEffect(permisoConcedido, camaraPermitida) {
+        if (camaraPermitida && permisoConcedido && !yaPidioUbicacion && !tienePermisoUbicacion(contexto)) {
             yaPidioUbicacion = true
             lanzadorUbicacion.launch(
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -105,7 +108,7 @@ fun EscanerScreen(
     }
 
     Box(modifier = modifier.fillMaxSize()) {
-        if (permisoConcedido) {
+        if (permisoConcedido && camaraPermitida) {
             VistaCamara(
                 escaneando = estado.escaneando,
                 onCodigoDetectado = onCodigoDetectado,
@@ -132,6 +135,8 @@ fun EscanerScreen(
                     modifier = Modifier.padding(12.dp)
                 )
             }
+        } else if (!camaraPermitida) {
+            CamaraPausada(onIrAPermisos = onIrAPermisos, modifier = Modifier.align(Alignment.Center))
         } else {
             SinPermisoCamara(
                 onPermitir = { lanzadorPermiso.launch(Manifest.permission.CAMERA) },
@@ -336,7 +341,7 @@ private fun TarjetaResultado(
 
 private fun tienePermisoCamara(contexto: Context): Boolean =
     ContextCompat.checkSelfPermission(contexto, Manifest.permission.CAMERA) ==
-        PackageManager.PERMISSION_GRANTED
+            PackageManager.PERMISSION_GRANTED
 
 private fun tienePermisoUbicacion(contexto: Context): Boolean =
     listOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION).any {

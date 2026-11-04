@@ -3,6 +3,8 @@ package com.example.aprendoiasantiago.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.aprendoiasantiago.data.repository.JuegoRepository
+import com.example.aprendoiasantiago.data.repository.NotificacionesRepository
+import com.example.aprendoiasantiago.domain.TipoNotificacion
 import com.example.aprendoiasantiago.data.repository.ResultadoEscaneo
 import com.example.aprendoiasantiago.data.repository.SesionRepository
 import com.example.aprendoiasantiago.ubicacion.ProveedorUbicacion
@@ -25,7 +27,8 @@ data class EscanerUiState(
 class EscanerViewModel(
     private val juego: JuegoRepository,
     private val sesion: SesionRepository,
-    private val ubicacion: ProveedorUbicacion
+    private val ubicacion: ProveedorUbicacion,
+    private val notificaciones: NotificacionesRepository
 ) : ViewModel() {
 
     private val _estado = MutableStateFlow(EscanerUiState())
@@ -46,11 +49,30 @@ class EscanerViewModel(
                 ResultadoEscaneo.Error
             }
             _estado.value = EscanerUiState(resultado = resultado)
+            if (resultado is ResultadoEscaneo.Valido && resultado.puntosGanados > 0) {
+                avisarLogro(usuarioId, resultado)
+            }
         }
     }
 
     /** Descarta el resultado y vuelve a activar la lectura. */
     fun escanearOtro() {
         _estado.value = EscanerUiState()
+    }
+
+    /** Guarda el aviso en la bandeja; si falla no afecta al escaneo ya registrado. */
+    private suspend fun avisarLogro(usuarioId: Long, resultado: ResultadoEscaneo.Valido) {
+        try {
+            notificaciones.registrar(
+                usuarioId,
+                TipoNotificacion.LOGRO,
+                "¡Ganaste ${resultado.puntosGanados} puntos!",
+                "Completaste la cápsula «${resultado.capsula.titulo}»."
+            )
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            // Aviso opcional: se ignora.
+        }
     }
 }
