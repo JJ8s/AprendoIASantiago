@@ -47,6 +47,7 @@ import com.example.aprendoiasantiago.ui.perfil.PerfilScreen
 import com.example.aprendoiasantiago.ui.perfil.PermisosScreen
 import com.example.aprendoiasantiago.ui.punto.PuntoDetalleScreen
 import com.example.aprendoiasantiago.ui.screens.CatalogoScreen
+import com.example.aprendoiasantiago.ui.screens.HistorialScreen
 import com.example.aprendoiasantiago.ui.screens.ProgresoScreen
 import com.example.aprendoiasantiago.ui.viewmodels.AdminViewModel
 import com.example.aprendoiasantiago.ui.viewmodels.AjustesPerfilViewModel
@@ -203,7 +204,7 @@ fun AppNavigation(contenedor: AppContainer) {
                 )
             }
 
-            // 5. DASHBOARD PRINCIPAL (Con enlace a tu ProgresoScreen)
+            // 5. DASHBOARD PRINCIPAL (Con enlace a tu ProgresoScreen y a HistorialScreen)
             composable(Destino.INICIO.ruta) {
                 val viewModel: PerfilViewModel = viewModel(factory = fabrica)
                 val estado by viewModel.estado.collectAsStateWithLifecycle()
@@ -213,7 +214,8 @@ fun AppNavigation(contenedor: AppContainer) {
                     onIrAMapa = { navegarAPestana(Destino.MAPA) },
                     onIrAEscaner = { navegarAPestana(Destino.ESCANER) },
                     onIrAColeccion = { navegarAPestana(Destino.COLECCION) },
-                    onVerProgresoClick = { navController.navigate("progreso") }
+                    onVerProgresoClick = { navController.navigate("progreso") },
+                    onVerHistorialClick = { navController.navigate("historial") } // <-- NUEVO
                 )
             }
 
@@ -401,6 +403,18 @@ fun AppNavigation(contenedor: AppContainer) {
                 val estado by viewModel.estado.collectAsStateWithLifecycle()
 
                 CatalogoScreen(
+                    progreso = estado.progreso,
+                    puntos = estado.puntos,
+                    onBackClick = { navController.popBackStack() }
+                )
+            }
+
+            // 15. TU PANTALLA DE HISTORIAL
+            composable("historial") {
+                val viewModel: PerfilViewModel = viewModel(factory = fabrica)
+                val estado by viewModel.estado.collectAsStateWithLifecycle()
+
+                HistorialScreen(
                     progreso = estado.progreso,
                     puntos = estado.puntos,
                     onBackClick = { navController.popBackStack() }

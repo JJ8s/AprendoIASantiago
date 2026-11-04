@@ -3,18 +3,21 @@ package com.example.aprendoiasantiago.ui.inicio
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.Button
@@ -31,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.aprendoiasantiago.ui.viewmodels.PerfilUiState
 
 @Composable
@@ -39,7 +43,8 @@ fun InicioScreen(
     onIrAMapa: () -> Unit,
     onIrAEscaner: () -> Unit,
     onIrAColeccion: () -> Unit,
-    onVerProgresoClick: () -> Unit, // <--- NUEVO: Evento para abrir la Pantalla 12
+    onVerProgresoClick: () -> Unit,
+    onVerHistorialClick: () -> Unit, // <--- NUEVO
     modifier: Modifier = Modifier
 ) {
     // 1. Extraemos los datos del usuario desde el estado (si aún carga, usamos valores por defecto)
@@ -208,28 +213,37 @@ fun InicioScreen(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp) // Reduje un poco el espacio
         ) {
             OutlinedButton(
                 onClick = onIrAMapa,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(52.dp)
+                modifier = Modifier.weight(1f).height(52.dp),
+                contentPadding = PaddingValues(0.dp)
             ) {
-                Icon(imageVector = Icons.Filled.Map, contentDescription = null)
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(text = "Mapa")
+                Icon(imageVector = Icons.Filled.Map, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(text = "Mapa", fontSize = 13.sp)
             }
 
             OutlinedButton(
                 onClick = onIrAColeccion,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(52.dp)
+                modifier = Modifier.weight(1f).height(52.dp),
+                contentPadding = PaddingValues(0.dp)
             ) {
-                Icon(imageVector = Icons.Filled.PhotoLibrary, contentDescription = null)
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(text = "Colección")
+                Icon(imageVector = Icons.Filled.PhotoLibrary, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(text = "Colección", fontSize = 13.sp)
+            }
+
+            // NUEVO BOTÓN HISTORIAL
+            OutlinedButton(
+                onClick = onVerHistorialClick,
+                modifier = Modifier.weight(1f).height(52.dp),
+                contentPadding = PaddingValues(0.dp)
+            ) {
+                Icon(imageVector = Icons.Filled.History, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(text = "Historial", fontSize = 13.sp)
             }
         }
     }
