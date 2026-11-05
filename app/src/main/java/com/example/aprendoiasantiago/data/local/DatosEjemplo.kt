@@ -23,6 +23,7 @@ object DatosEjemplo {
 
     // NUEVO: Ruta local al video que acabas de guardar en la carpeta res/raw/
     const val VIDEO_PRUEBA = "android.resource://com.example.aprendoiasantiago/raw/capsula_educacion"
+    const val VIDEO_COMPANERO = "android.resource://com.example.aprendoiasantiago/raw/capsula_jordy"
 
     val puntos: List<PuntoTuristicoEntity> = listOf(
         PuntoTuristicoEntity(
@@ -64,7 +65,7 @@ object DatosEjemplo {
 
     val capsulas: List<CapsulaEntity> = listOf(
         CapsulaEntity(1, puntoId = 1, titulo = "¿Qué es la Inteligencia Artificial?", urlVideo = VIDEO_PRUEBA, codigoQr = "AIJS-001", puntos = 10),
-        CapsulaEntity(2, puntoId = 2, titulo = "Cómo aprende una máquina", urlVideo = VIDEO_PRUEBA, codigoQr = "AIJS-002", puntos = 10),
+        CapsulaEntity(2, puntoId = 2, titulo = "Cómo aprende una máquina", urlVideo = VIDEO_COMPANERO, codigoQr = "AIJS-002", puntos = 10),
         CapsulaEntity(3, puntoId = 3, titulo = "Reconocimiento de imágenes", urlVideo = VIDEO_PRUEBA, codigoQr = "AIJS-003", puntos = 15),
         CapsulaEntity(4, puntoId = 4, titulo = "La IA y los datos abiertos", urlVideo = VIDEO_PRUEBA, codigoQr = "AIJS-004", puntos = 10),
         CapsulaEntity(5, puntoId = 5, titulo = "Cómo entiende una IA la voz y el idioma", urlVideo = VIDEO_PRUEBA, codigoQr = "AIJS-005", puntos = 15),
