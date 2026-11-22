@@ -41,6 +41,8 @@ import com.example.aprendoiasantiago.ui.inicio.InicioScreen
 import com.example.aprendoiasantiago.ui.login.LoginScreen
 import com.example.aprendoiasantiago.ui.mapa.MapaScreen
 import com.example.aprendoiasantiago.ui.perfil.AyudaScreen
+import com.example.aprendoiasantiago.ui.screens.PostScreen
+import com.example.aprendoiasantiago.ui.viewmodels.PostViewModel
 import com.example.aprendoiasantiago.ui.perfil.EditarPerfilScreen
 import com.example.aprendoiasantiago.ui.perfil.NotificacionesScreen
 import com.example.aprendoiasantiago.ui.perfil.PerfilScreen
@@ -52,6 +54,7 @@ import com.example.aprendoiasantiago.ui.screens.ProgresoScreen
 import com.example.aprendoiasantiago.ui.viewmodels.AdminViewModel
 import com.example.aprendoiasantiago.ui.viewmodels.AjustesPerfilViewModel
 import com.example.aprendoiasantiago.ui.viewmodels.CapsulaViewModel
+import com.example.aprendoiasantiago.ui.viewmodels.ClimaViewModel
 import com.example.aprendoiasantiago.ui.viewmodels.EscanerViewModel
 import com.example.aprendoiasantiago.ui.viewmodels.EvidenciaViewModel
 import com.example.aprendoiasantiago.ui.viewmodels.GenContViewModel
@@ -164,11 +167,16 @@ fun AppNavigation(contenedor: AppContainer) {
                 val puntos by viewModel.puntos.collectAsStateWithLifecycle()
                 val capsulas by viewModel.capsulas.collectAsStateWithLifecycle()
 
+                val aviso by viewModel.aviso.collectAsStateWithLifecycle()
+
                 AdminScreen(
+                    aviso = aviso,
+                    onAvisoVisto = viewModel::avisoVisto,
                     usuarios = usuarios,
                     puntos = puntos,
                     capsulas = capsulas,
                     onEliminarUsuario = viewModel::eliminarJugador,
+                    onEditarUsuario = viewModel::editarJugador,
                     onGuardarPunto = viewModel::guardarPunto,
                     onEliminarPunto = viewModel::eliminarPunto,
                     onGuardarCapsula = viewModel::guardarCapsula,
@@ -189,7 +197,11 @@ fun AppNavigation(contenedor: AppContainer) {
                 val capsulas by viewModel.capsulas.collectAsStateWithLifecycle()
                 val puntos by viewModel.puntos.collectAsStateWithLifecycle()
 
+                val aviso by viewModel.aviso.collectAsStateWithLifecycle()
+
                 GenContScreen(
+                    aviso = aviso,
+                    onAvisoVisto = viewModel::avisoVisto,
                     capsulas = capsulas,
                     puntos = puntos,
                     onGuardarCapsula = viewModel::guardarCapsula,
@@ -243,8 +255,16 @@ fun AppNavigation(contenedor: AppContainer) {
                 val viewModel: PuntoDetalleViewModel = viewModel(factory = fabrica)
                 val estado by viewModel.estado.collectAsStateWithLifecycle()
                 LaunchedEffect(puntoId) { viewModel.cargar(puntoId) }
+                // Clima del lugar: API externa Open-Meteo (independiente de la base local y de los microservicios)
+                val climaVm: ClimaViewModel = viewModel(factory = fabrica)
+                val clima by climaVm.estado.collectAsStateWithLifecycle()
+                val ubicacionDelPunto = estado.detalle?.punto
+                LaunchedEffect(ubicacionDelPunto?.id) {
+                    ubicacionDelPunto?.let { climaVm.cargar(it.latitud, it.longitud) }
+                }
                 PuntoDetalleScreen(
                     estado = estado,
+                    clima = clima,
                     onVolver = { navController.popBackStack() },
                     onIrAlEscaner = { navegarAPestana(Destino.ESCANER) },
                     onVerEnMapa = {
@@ -375,7 +395,24 @@ fun AppNavigation(contenedor: AppContainer) {
             }
 
             composable(RUTA_PERFIL_AYUDA) {
-                AyudaScreen(onVolver = { navController.popBackStack() })
+                AyudaScreen(
+                    onVolver = { navController.popBackStack() },
+                    onNovedades = { navController.navigate(RUTA_POSTS) }
+                )
+            }
+
+            composable(RUTA_POSTS) {
+                val viewModel: PostViewModel = viewModel(factory = fabrica)
+                val estado by viewModel.estado.collectAsStateWithLifecycle()
+                PostScreen(
+                    estado = estado,
+                    onVolver = { navController.popBackStack() },
+                    onReintentar = viewModel::cargar,
+                    onEditar = viewModel::editar,
+                    onGuardar = viewModel::guardar,
+                    onGuardarSoloTitulo = viewModel::guardarSoloTitulo,
+                    onEliminar = viewModel::eliminar
+                )
             }
 
             // 13. TU PANTALLA 12: PUNTAJE Y PROGRESO

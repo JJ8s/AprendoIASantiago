@@ -50,6 +50,13 @@ interface UsuarioDao {
     @Query("SELECT * FROM usuarios WHERE id = :id")
     suspend fun buscarPorId(id: Long): UsuarioEntity?
 
+    /** Busca por nombre de usuario sin distinguir mayúsculas (se usa al sincronizar con el servidor). */
+    @Query("SELECT * FROM usuarios WHERE nombreUsuario = :alias COLLATE NOCASE LIMIT 1")
+    suspend fun buscarPorAlias(alias: String): UsuarioEntity?
+
+    @Query("UPDATE usuarios SET puntaje = :puntaje WHERE id = :id")
+    suspend fun actualizarPuntaje(id: Long, puntaje: Int)
+
     @Query("UPDATE usuarios SET nombreVisible = :nombre, correo = :correo, telefono = :telefono WHERE id = :id")
     suspend fun actualizarDatos(id: Long, nombre: String, correo: String, telefono: String)
 
@@ -166,6 +173,19 @@ abstract class ProgresoDao {
 
     @Query("UPDATE progreso SET selfieUri = :uri WHERE usuarioId = :usuarioId AND capsulaId = :capsulaId")
     abstract suspend fun guardarSelfie(usuarioId: Long, capsulaId: Long, uri: String)
+
+    /**
+     * Guarda la selfie y suma la bonificación UNA sola vez por cápsula (solo si la cápsula ya estaba
+     * completada y aún no tenía selfie). Devuelve `true` si se sumó la bonificación.
+     */
+    @Transaction
+    open suspend fun registrarSelfieConBonus(usuarioId: Long, capsulaId: Long, uri: String, bonus: Int): Boolean {
+        val previo = buscar(usuarioId, capsulaId) ?: return false
+        guardarSelfie(usuarioId, capsulaId, uri)
+        if (previo.selfieUri != null) return false
+        sumarPuntos(usuarioId, bonus)
+        return true
+    }
 
     @Query("UPDATE progreso SET fotoEntornoUri = :uri WHERE usuarioId = :usuarioId AND capsulaId = :capsulaId")
     abstract suspend fun guardarFotoEntorno(usuarioId: Long, capsulaId: Long, uri: String)

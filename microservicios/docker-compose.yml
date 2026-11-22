@@ -1,0 +1,14 @@
+# Opcional: MySQL real para ambos microservicios.
+# Uso: docker compose up -d   y luego arrancar cada servicio con --spring.profiles.active=mysql
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: aprendoia-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+volumes:
+  mysql_data:

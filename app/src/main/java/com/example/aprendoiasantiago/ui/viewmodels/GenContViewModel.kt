@@ -6,6 +6,8 @@ import com.example.aprendoiasantiago.data.model.CapsulaEntity
 import com.example.aprendoiasantiago.data.model.PuntoTuristicoEntity
 import com.example.aprendoiasantiago.data.repository.JuegoRepository
 import com.example.aprendoiasantiago.data.repository.SesionRepository
+import com.example.aprendoiasantiago.data.repository.ServidorRepository
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -13,8 +15,12 @@ import kotlinx.coroutines.launch
 
 class GenContViewModel(
     private val juego: JuegoRepository,
-    private val sesion: SesionRepository
+    private val sesion: SesionRepository,
+    private val servidor: ServidorRepository? = null
 ) : ViewModel() {
+
+    val aviso: StateFlow<String?> = servidor?.aviso ?: MutableStateFlow(null)
+    fun avisoVisto() { servidor?.avisoVisto() }
 
     // Observadores en tiempo real
     val capsulas: StateFlow<List<CapsulaEntity>> = juego.capsulas

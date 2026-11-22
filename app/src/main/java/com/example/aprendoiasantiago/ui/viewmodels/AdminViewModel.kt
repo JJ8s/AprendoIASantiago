@@ -7,7 +7,10 @@ import com.example.aprendoiasantiago.data.model.PuntoTuristicoEntity
 import com.example.aprendoiasantiago.data.model.UsuarioEntity
 import com.example.aprendoiasantiago.data.repository.AuthRepository
 import com.example.aprendoiasantiago.data.repository.JuegoRepository
+import com.example.aprendoiasantiago.data.repository.PerfilRepository
 import com.example.aprendoiasantiago.data.repository.SesionRepository
+import com.example.aprendoiasantiago.data.repository.ServidorRepository
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -16,8 +19,14 @@ import kotlinx.coroutines.launch
 class AdminViewModel(
     private val auth: AuthRepository,
     private val juego: JuegoRepository, // <-- Inyectamos el repositorio del juego
-    private val sesion: SesionRepository
+    private val sesion: SesionRepository,
+    private val servidor: ServidorRepository? = null,
+    private val perfil: PerfilRepository? = null
 ) : ViewModel() {
+
+    /** Mensaje del servidor para mostrar al usuario (sin conexión, QR repetido, etc.). */
+    val aviso: StateFlow<String?> = servidor?.aviso ?: MutableStateFlow(null)
+    fun avisoVisto() { servidor?.avisoVisto() }
 
     // 1. Observadores en tiempo real (Las 3 listas para las 3 pestañas)
     val usuarios: StateFlow<List<UsuarioEntity>> = auth.observarPerfilesActivos()
@@ -31,6 +40,10 @@ class AdminViewModel(
 
     // 2. Acciones del Administrador
     fun eliminarJugador(id: Long) = viewModelScope.launch { auth.eliminarJugador(id) }
+
+    /** Edita nombre, correo y teléfono de un jugador (las mismas reglas del formulario de perfil). */
+    fun editarJugador(id: Long, nombre: String, correo: String, telefono: String) =
+        viewModelScope.launch { perfil?.guardarDatos(id, nombre, correo, telefono) }
 
     fun guardarPunto(punto: PuntoTuristicoEntity) = viewModelScope.launch { juego.guardarPunto(punto) }
     fun eliminarPunto(id: Long) = viewModelScope.launch { juego.eliminarPunto(id) }

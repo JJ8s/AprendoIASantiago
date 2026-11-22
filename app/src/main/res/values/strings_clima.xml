@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="clima_seccion">Clima ahora</string>
+    <string name="clima_fuente">Datos de Open-Meteo.com. Si no hay conexión, el resto de la app funciona igual.</string>
+    <string name="clima_cargando">Consultando el clima…</string>
+    <string name="clima_no_disponible">No se pudo obtener el clima.</string>
+    <string name="clima_sin_conexion">No se pudo obtener el clima. Revisa tu conexión.</string>
+    <string name="clima_temperatura">Temperatura</string>
+    <string name="clima_sensacion">Sensación térmica</string>
+    <string name="clima_viento">Viento</string>
+    <string name="clima_valor_grados">%1$.0f °C</string>
+    <string name="clima_valor_viento">%1$.0f km/h</string>
+
+    <string name="clima_despejado">Despejado</string>
+    <string name="clima_parcial">Parcialmente nublado</string>
+    <string name="clima_nublado">Nublado</string>
+    <string name="clima_niebla">Niebla</string>
+    <string name="clima_llovizna">Llovizna</string>
+    <string name="clima_lluvia">Lluvia</string>
+    <string name="clima_nieve">Nieve</string>
+    <string name="clima_tormenta">Tormenta eléctrica</string>
+    <string name="clima_desconocida">Sin datos del cielo</string>
+
+    <string name="clima_consejo_paraguas">Lleva paraguas o impermeable para recorrer el lugar.</string>
+    <string name="clima_consejo_abrigo">Hace frío: abrígate bien.</string>
+    <string name="clima_consejo_hidratarse">Hace calor: lleva agua y protector solar.</string>
+    <string name="clima_consejo_todo_bien">Buen momento para recorrer el lugar.</string>
+</resources>

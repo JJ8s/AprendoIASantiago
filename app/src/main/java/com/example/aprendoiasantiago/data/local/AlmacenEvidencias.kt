@@ -6,11 +6,15 @@ import android.net.Uri
 import java.io.File
 
 /**
- * Guarda las fotos de evidencia en el almacenamiento privado de la app.
- * No necesita permisos ni aparece en la galería.
+ * Guarda las fotos de evidencia en el almacenamiento privado de la app (esa copia es la que usa la base de datos).
+ * Si se entrega [publicarEnGaleria], además deja una copia en la galería del teléfono.
  * Solo se guarda la ruta en la base de datos, no la imagen.
  */
-class AlmacenEvidencias(private val directorio: File) {
+class AlmacenEvidencias(
+    private val directorio: File,
+    /** Opcional: copia la foto también a la galería del teléfono (ver [GaleriaFotos]). Un fallo aquí no afecta el guardado. */
+    private val publicarEnGaleria: ((Bitmap, String) -> Unit)? = null
+) {
 
     /**
      * Guarda el bitmap como JPEG y devuelve su dirección (file://...).
@@ -35,6 +39,8 @@ class AlmacenEvidencias(private val directorio: File) {
                 "No se pudo guardar la imagen"
             }
         }
+
+        runCatching { publicarEnGaleria?.invoke(bitmap, archivo.nameWithoutExtension) }
 
         return Uri.fromFile(archivo).toString()
     }

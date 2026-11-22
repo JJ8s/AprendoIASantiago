@@ -22,6 +22,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.aprendoiasantiago.R
 import com.example.aprendoiasantiago.domain.CapsulaDelPunto
+import com.example.aprendoiasantiago.domain.CondicionClima
+import com.example.aprendoiasantiago.domain.ConsejoClima
 import com.example.aprendoiasantiago.domain.DetallePunto
 import com.example.aprendoiasantiago.ui.components.BotonIos
 import com.example.aprendoiasantiago.ui.components.BotonSecundarioIos
@@ -31,6 +33,7 @@ import com.example.aprendoiasantiago.ui.components.PantallaIos
 import com.example.aprendoiasantiago.ui.components.SeccionIos
 import com.example.aprendoiasantiago.ui.theme.IosGris
 import com.example.aprendoiasantiago.ui.theme.IosVerde
+import com.example.aprendoiasantiago.ui.viewmodels.EstadoClima
 import com.example.aprendoiasantiago.ui.viewmodels.PuntoDetalleUiState
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -44,7 +47,9 @@ fun PuntoDetalleScreen(
     onIrAlEscaner: () -> Unit,
     onVerEnMapa: () -> Unit,
     onVerCapsula: (Long) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    /** Clima del lugar (API externa). `null` = no mostrar la sección. */
+    clima: EstadoClima? = null
 ) {
     val detalle = estado.detalle
     PantallaIos(
@@ -65,7 +70,7 @@ fun PuntoDetalleScreen(
                 modifier = Modifier.fillMaxWidth().padding(48.dp)
             )
 
-            else -> Contenido(detalle, onIrAlEscaner, onVerEnMapa, onVerCapsula)
+            else -> Contenido(detalle, clima, onIrAlEscaner, onVerEnMapa, onVerCapsula)
         }
     }
 }
@@ -73,6 +78,7 @@ fun PuntoDetalleScreen(
 @Composable
 private fun Contenido(
     detalle: DetallePunto,
+    clima: EstadoClima?,
     onIrAlEscaner: () -> Unit,
     onVerEnMapa: () -> Unit,
     onVerCapsula: (Long) -> Unit
@@ -101,6 +107,8 @@ private fun Contenido(
             detalle = stringResource(R.string.punto_coordenadas_valor, detalle.punto.latitud, detalle.punto.longitud)
         )
     }
+
+    if (clima != null) SeccionClima(clima)
 
     SeccionIos(
         encabezado = stringResource(R.string.punto_seccion_capsulas),
@@ -136,6 +144,61 @@ private fun Contenido(
         BotonIos(texto = stringResource(R.string.punto_ir_escaner), onClick = onIrAlEscaner)
         BotonSecundarioIos(texto = stringResource(R.string.punto_ver_mapa), onClick = onVerEnMapa)
     }
+}
+
+@Composable
+private fun SeccionClima(clima: EstadoClima) {
+    SeccionIos(encabezado = stringResource(R.string.clima_seccion), nota = stringResource(R.string.clima_fuente)) {
+        when (clima) {
+            EstadoClima.Cargando -> Text(
+                text = stringResource(R.string.clima_cargando),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.fillMaxWidth().padding(16.dp)
+            )
+
+            is EstadoClima.NoDisponible -> Text(
+                text = stringResource(if (clima.sinConexion) R.string.clima_sin_conexion else R.string.clima_no_disponible),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.fillMaxWidth().padding(16.dp)
+            )
+
+            is EstadoClima.Disponible -> {
+                val c = clima.clima
+                FilaIos(titulo = stringResource(textoCondicion(c.condicion)), detalle = stringResource(R.string.clima_valor_grados, c.temperatura))
+                DivisorIos(conIcono = false)
+                FilaIos(titulo = stringResource(R.string.clima_sensacion), detalle = stringResource(R.string.clima_valor_grados, c.sensacion))
+                DivisorIos(conIcono = false)
+                FilaIos(titulo = stringResource(R.string.clima_viento), detalle = stringResource(R.string.clima_valor_viento, c.vientoKmh))
+                DivisorIos(conIcono = false)
+                Text(
+                    text = stringResource(textoConsejo(c.consejo)),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.fillMaxWidth().padding(16.dp)
+                )
+            }
+        }
+    }
+}
+
+private fun textoCondicion(c: CondicionClima): Int = when (c) {
+    CondicionClima.DESPEJADO -> R.string.clima_despejado
+    CondicionClima.PARCIAL -> R.string.clima_parcial
+    CondicionClima.NUBLADO -> R.string.clima_nublado
+    CondicionClima.NIEBLA -> R.string.clima_niebla
+    CondicionClima.LLOVIZNA -> R.string.clima_llovizna
+    CondicionClima.LLUVIA -> R.string.clima_lluvia
+    CondicionClima.NIEVE -> R.string.clima_nieve
+    CondicionClima.TORMENTA -> R.string.clima_tormenta
+    CondicionClima.DESCONOCIDA -> R.string.clima_desconocida
+}
+
+private fun textoConsejo(c: ConsejoClima): Int = when (c) {
+    ConsejoClima.PARAGUAS -> R.string.clima_consejo_paraguas
+    ConsejoClima.ABRIGO -> R.string.clima_consejo_abrigo
+    ConsejoClima.HIDRATARSE -> R.string.clima_consejo_hidratarse
+    ConsejoClima.TODO_BIEN -> R.string.clima_consejo_todo_bien
 }
 
 @Composable

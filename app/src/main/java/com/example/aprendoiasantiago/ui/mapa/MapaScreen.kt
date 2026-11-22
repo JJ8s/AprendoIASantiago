@@ -68,7 +68,6 @@ private const val ZOOM_AL_CENTRAR = 17.0
 private const val MARGEN_RUTA_PX = 160
 private const val ANCHO_LINEA_RUTA = 10f
 
-private const val COLOR_COMPLETADO = 0xFF2E7D32.toInt()
 private const val COLOR_RUTA = 0xFF1565C0.toInt()
 private const val USER_AGENT = "AprendoIASantiago/1.0 (proyecto academico MVP)"
 private const val CARPETA_CACHE = "osmdroid_v2"
@@ -95,6 +94,11 @@ fun MapaScreen(
     val vistaMapa = remember { crearMapView(contexto) }
     val capaUbicacion = remember(vistaMapa) {
         MyLocationNewOverlay(GpsMyLocationProvider(contexto), vistaMapa).also {
+            val punto = IconosMapa.ubicacion(contexto)
+            it.setPersonIcon(punto)
+            it.setDirectionIcon(punto)
+            it.setPersonAnchor(0.5f, 0.5f)
+            it.setDirectionAnchor(0.5f, 0.5f)
             vistaMapa.overlays.add(it)
         }
     }
@@ -304,9 +308,7 @@ private fun mostrarMarcadores(
                 onAbrirDetalle(punto.id)
                 true
             }
-            if (estado.completado) {
-                icon = icon?.mutate()?.also { it.setTint(COLOR_COMPLETADO) }
-            }
+            icon = IconosMapa.pin(contexto, estado.completado, orden)
         }
         mapa.overlays.add(marcador)
     }

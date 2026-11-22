@@ -28,14 +28,17 @@ data class PerfilUiState(
     val totalCapsulas: Int get() = progreso.size
 
     // --- LÓGICA DE NEGOCIO: CALCULAR SELFIES ---
-    // Regla: 1 QR = 10 pts | 1 Selfie = 100 pts.
+    // Regla: cada QR da los puntos de su cápsula (10 o 15 según el contenido) y cada selfie da 100.
+    // Los puntos que no vienen de cápsulas completadas se consideran de selfies.
     val selfiesTomadas: Int get() {
         val puntosTotales = usuario?.puntaje ?: 0
-        val puntosPorQr = completadas * 10
+        val puntosPorQr = progreso.filter { it.completada }.sumOf { it.capsula.puntos }
         val puntosSobrantes = puntosTotales - puntosPorQr
+        return if (puntosSobrantes > 0) puntosSobrantes / PUNTOS_POR_SELFIE else 0
+    }
 
-        // Si hay puntos sobrantes, los dividimos por 100 para saber cuántas selfies tomó
-        return if (puntosSobrantes > 0) puntosSobrantes / 100 else 0
+    companion object {
+        const val PUNTOS_POR_SELFIE = 100
     }
 }
 

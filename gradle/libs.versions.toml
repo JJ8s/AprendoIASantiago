@@ -1,4 +1,5 @@
 [versions]
+retrofit = "2.11.0"
 agp = "9.4.1"
 kotlin = "2.2.10"
 ksp = "2.3.10"
@@ -16,8 +17,15 @@ mlkitFace = "16.1.7"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
+# Guía 15: testing híbrido
+kotest = "5.8.0"
+junitJupiter = "5.10.0"
+mockk = "1.13.10"
+coroutinesTest = "1.10.2"
 
 [libraries]
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
@@ -50,6 +58,14 @@ androidx-compose-material-icons-extended = { group = "androidx.compose.material"
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+
+# Guía 15
+kotest-runner-junit5 = { group = "io.kotest", name = "kotest-runner-junit5", version.ref = "kotest" }
+kotest-assertions-core = { group = "io.kotest", name = "kotest-assertions-core", version.ref = "kotest" }
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
+junit-vintage-engine = { group = "org.junit.vintage", name = "junit-vintage-engine", version.ref = "junitJupiter" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
