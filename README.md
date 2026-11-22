@@ -1,35 +1,115 @@
-
 # Aprendo IA Jugando en Santiago
 
-Aplicación Android nativa de aprendizaje gamificado de Inteligencia Artificial en entornos urbanos. El jugador recorre puntos turísticos emblemáticos de Santiago, **escanea códigos QR físicos**, **visualiza cápsulas educativas en video (Shorts)** sobre IA, suma puntajes en tiempo real, sube en el ranking local y registra **evidencia fotográfica** validada con Inteligencia Artificial en el dispositivo (detección facial con ML Kit).
+## 1. Nombre del proyecto
 
-Proyecto desarrollado para el caso de estudio *Aprendo IA Jugando en Santiago* (**Triskeledu SpA**, asignatura DSY1105 - Duoc UC).
+**Aprendo IA Jugando en Santiago** — app Android nativa (Kotlin + Jetpack Compose) de aprendizaje gamificado de
+Inteligencia Artificial en entornos urbanos. El jugador recorre puntos turísticos de Santiago, **escanea códigos QR**,
+mira **cápsulas en video** sobre IA, suma puntos, sube en el **ranking** y registra **evidencia fotográfica** validada
+con ML Kit. Caso de estudio *Triskeledu SpA* · asignatura DSY1105 · Duoc UC. Todos los datos son sintéticos.
 
-Arquitectura **100% autónoma y persistente en SQLite (Room)**, con soporte multi-usuario en un mismo dispositivo y control de acceso por roles (**Cliente/Jugador**, **Administrador** y **Creador de Contenido**).
+**Arquitectura:** MVVM. La app guarda todo en **Room/SQLite** (funciona sin internet) y se conecta con
+**dos microservicios Spring Boot** (usuarios y contenido) y con **APIs externas** (clima y novedades) mediante **Retrofit**.
 
-## 1. Requisitos del Entorno y Ejecución
+## 2. Integrantes
 
-| Requisito | Detalle Recomendado | 
-| ----- | ----- | 
-| **Android Studio** | Versión reciente compatible con AGP 9.x (o ajustar `agp = "9.3.0"` en `gradle/libs.versions.toml`). | 
-| **JDK** | JDK embebido de Android Studio (JBR 17/21). | 
-| **Dispositivo Físico / AVD** | Android 7.0+ (`minSdk 24`). **Emulador validado y recomendado: Pixel 7 con API 35 (Android 15)** para garantizar salida de red limpia en `ExoPlayer` y uso de webcam. | 
-| **Cámara en Emulador** | En *Device Manager → Edit → Show Advanced Settings*, configurar cámara **Rear = Webcam0** para escanear códigos QR reales desde el notebook. | 
-| **Internet** | Requerido para la descarga de teselas de OpenStreetMap y streaming de las cápsulas `.mp4` mediante `Media3 ExoPlayer`. | 
+| Integrante | Responsabilidad principal |
+| ----- | ----- |
+| **Jordy** | Base de datos Room, repositorios, lógica de dominio, GPS/ML Kit, pruebas unitarias, integración con microservicios |
+| **Alejandro** | Interfaz Compose, navegación por roles, paneles Admin y Creador de Contenido, multimedia (ExoPlayer), pruebas en emulador |
 
-### Pasos de Instalación
+> Completar con apellidos, número de equipo y el enlace al tablero de Trello (ver sección 12).
 
-1. Clonar el repositorio o descomprimir el proyecto y abrir la carpeta en **Android Studio**.
+## 3. Funcionalidades
 
-2. Esperar a que finalice el **Gradle Sync**.
+- **Jugador:** registro e inicio de sesión (multi-perfil), mapa osmdroid con puntos y rutas, escáner QR (CameraX + ML Kit),
+  video de la cápsula (Media3), puntos anti-duplicados, selfie validada con IA y foto del entorno, colección, historial,
+  progreso y ranking.
+- **Perfil (estilo iOS):** editar datos, cambiar avatar/foto, cambiar contraseña, notificaciones, permisos (ubicación y cámara),
+  ayuda y soporte, cerrar sesión.
+- **Detalle del punto:** descripción, distancia, cápsulas, puntos y **clima actual** (API externa).
+- **Administrador (`Admin`):** CRUD de jugadores, puntos turísticos y cápsulas (crear, **editar**, eliminar).
+- **Creador de contenido (`GenCont`):** CRUD de cápsulas.
+- **Conexión con microservicios:** registro, login, perfil, progreso, ranking y contenido se envían y reciben del servidor;
+  si no hay red la app avisa y sigue con los datos locales.
+- **Novedades:** lista y CRUD de publicaciones desde una API REST externa (Guía 14).
 
-3. Seleccionar un teléfono físico por USB o el emulador **Pixel 7 (API 35)** y pulsar **Run ▶**.
+## 4. Endpoints utilizados
 
-4. Para ejecutar la suite de pruebas unitarias locales: `./gradlew test` (o clic derecho sobre `app/src/test` → *Run Tests*).
+### 4.1 Microservicios propios (Spring Boot 3.3, Java 17) — carpeta `microservicios/`
 
-> **Nota importante sobre SQLite:** Si se modifica la URL del video en `DatosEjemplo.kt` o se altera el esquema inicial, **desinstala la aplicación del emulador/teléfono** antes de volver a darle *Run* para forzar la recreación limpia de la base de datos local.
+**usuarios-service** · `http://localhost:8081/api` (emulador: `10.0.2.2:8081`) · BD `usuarios`
 
-## 2. Roles del Sistema y Cuentas de Acceso
+| Método | Ruta | Uso en la app |
+| ----- | ----- | ----- |
+| POST | `/usuarios` | Registro de jugador (409 si el alias existe) |
+| POST | `/auth/login` | Inicio de sesión |
+| GET | `/usuarios`, `/usuarios/{id}` | Listar / obtener |
+| PUT | `/usuarios/{id}` | Editar perfil |
+| PUT | `/usuarios/{id}/clave` | Cambiar contraseña |
+| DELETE | `/usuarios/{id}` | Eliminar jugador (panel Admin) |
+| GET | `/ranking` | Ranking |
+| POST | `/usuarios/{id}/progreso/{capsulaId}` | Registrar cápsula completada (idempotente) |
+| GET | `/usuarios/{id}/progreso` | Cápsulas completadas |
+
+**contenido-service** · `http://localhost:8082/api` (emulador: `10.0.2.2:8082`) · BD `contenido`
+
+| Método | Ruta | Uso en la app |
+| ----- | ----- | ----- |
+| GET / POST | `/puntos` | Listar / crear punto |
+| GET / PUT / DELETE | `/puntos/{id}` | Ver / editar / borrar punto |
+| GET | `/puntos/{id}/capsulas` | Cápsulas de un punto |
+| GET / POST | `/capsulas` | Listar / crear cápsula (QR único, 409 si se repite) |
+| GET / PUT / DELETE | `/capsulas/{id}` | Ver / editar / borrar cápsula |
+| GET | `/capsulas/qr/{codigo}` | Buscar por QR |
+
+Errores con formato `{"estado":404,"mensaje":"..."}`. Detalle completo en `microservicios/README.md`.
+
+### 4.2 APIs externas (Retrofit)
+
+| API | Endpoint | Uso |
+| ----- | ----- | ----- |
+| Open-Meteo | `GET https://api.open-meteo.com/v1/forecast?latitude=..&longitude=..&current=temperature_2m,apparent_temperature,wind_speed_10m,weather_code` | Sección "Clima ahora" en el Detalle del punto |
+| JSONPlaceholder | `GET/POST/PUT/PATCH/DELETE https://jsonplaceholder.typicode.com/posts` | Pantalla Novedades (Perfil → Ayuda → Novedades) |
+
+Cada API usa su propio cliente Retrofit; ninguna escribe en Room ni se mezcla con los microservicios.
+
+## 5. Pasos para ejecutar
+
+**Requisitos:** Android Studio reciente (AGP 9.x), JDK 17+, Maven (o el de IntelliJ), emulador Pixel 7 API 35 o teléfono Android 7+.
+
+1. **Microservicios** (dos terminales):
+   ```
+   cd microservicios/usuarios-service  && mvn spring-boot:run     # puerto 8081
+   cd microservicios/contenido-service && mvn spring-boot:run     # puerto 8082
+   ```
+   Usan H2 en archivo (sin instalar nada). Para MySQL: `docker compose up -d` en `microservicios/` y agregar
+   `-Dspring-boot.run.arguments=--spring.profiles.active=mysql`.
+2. **App:** abrir la carpeta en Android Studio → *Gradle Sync* → elegir el emulador → **Run ▶**.
+   Teléfono real: `./gradlew assembleDebug -PurlUsuarios=http://IP_DEL_PC:8081/api/ -PurlContenido=http://IP_DEL_PC:8082/api/`
+   (teléfono y PC en la misma red wifi).
+3. **Ingresar** con `Admin/123`, `GenCont/123`, `demo/demo1234` o registrar un jugador nuevo (sección 7).
+4. **Pruebas:** `./gradlew test` (app) y `mvn test` (cada microservicio). Cobertura: ver `docs/PRUEBAS_Y_COBERTURA.md`.
+5. **APK firmado:** ver `GUIA_APK_FIRMADO.md` (`keytool` → `keystore.properties` → `./gradlew assembleRelease`).
+   El APK queda en `app/build/outputs/apk/release/app-release.apk`; cópialo a `entrega/` junto al `.jks`.
+
+> Si cambia el esquema de Room o la URL del video de ejemplo, desinstala la app del emulador antes de volver a ejecutar.
+
+## 6. Captura del APK firmado y del .jks
+
+> Reemplazar con las capturas reales (ver lista en `docs/capturas/LEEME.md`).
+
+| Evidencia | Archivo |
+| ----- | ----- |
+| APK firmado generado (`app-release.apk` en la carpeta de salida) | `docs/capturas/apk_firmado.png` |
+| Llave `.jks` creada | `docs/capturas/jks.png` |
+| `./gradlew signingReport` mostrando la firma release | `docs/capturas/signing_report.png` |
+
+![APK firmado](docs/capturas/apk_firmado.png)
+![Llave .jks](docs/capturas/jks.png)
+
+---
+
+## 7. Roles del sistema y cuentas de acceso
 
 La aplicación inicia en la portada animada de **Bienvenida** y da paso al selector **¿Quién juega hoy?**, permitiendo alternar entre múltiples perfiles registrados en el mismo teléfono o iniciar sesión según el rol requerido por el caso de estudio:
 
@@ -44,7 +124,7 @@ La aplicación inicia en la portada animada de **Bienvenida** y da paso al selec
 
 **Perfiles sintéticos adicionales para el Ranking:** Camila R. (320 pts), Matías P. (270 pts), Valentina S. (210 pts), Diego T. (150 pts), Sofía L. (90 pts).
 
-## 3. Puntos Georreferenciados y Códigos QR Oficiales
+## 8. Puntos Georreferenciados y Códigos QR Oficiales
 
 Los códigos QR utilizan identificadores limpios en **texto plano** que la aplicación cruza mediante consultas asíncronas contra la base de datos local SQLite:
 
@@ -68,7 +148,7 @@ Los códigos QR utilizan identificadores limpios en **texto plano** que la aplic
 
   * *Cerros y cultura*: Santa Lucía → GAM → San Cristóbal.
 
-## 4. Flujo Completo de la Aplicación
+## 9. Flujo Completo de la Aplicación
 
 ### A. Flujo del Cliente (Jugador)
 
@@ -102,7 +182,7 @@ Los códigos QR utilizan identificadores limpios en **texto plano** que la aplic
 
 * **Panel de Creador (`GenContScreen`):** Al autenticarse como `GenCont`, accede al mantenedor dedicado de cápsulas educativas, permitiendo asociar título, URL de video `.mp4`, código QR único, punto turístico y puntaje.
 
-## 5. Base de Datos Local (Room / SQLite)
+## 10. Base de Datos Local (Room / SQLite)
 
 Base de datos relacional local `aprendo_ia_santiago.db` gestionada con **Room**, **Corrutinas (`suspend`)** y **`Flow`** para actualización reactiva de la UI sin bloquear el hilo principal (*Main Thread*).
 
@@ -112,12 +192,14 @@ Base de datos relacional local `aprendo_ia_santiago.db` gestionada con **Room**,
 | `puntos_turisticos` | Hitos georreferenciados de Santiago | `id`, `nombre`, `descripcion`, `latitud`, `longitud`, `altitud` | 
 | `capsulas` | Videos cortos asociados a cada QR | `id`, `puntoId` (FK), `titulo`, `urlVideo`, `codigoQr` (UNIQUE), `puntos` | 
 | `progreso` | Historial por jugador y evidencias | `usuarioId` + `capsulaId` (PK compuesta), `completada`, `fechaMillis`, `latitud`, `longitud`, `altitud`, `selfieUri`, `fotoEntornoUri` | 
-| `rutas` / `ruta_puntos` | Recorridos turísticos sugeridos | `id`, `nombre`, `descripcion` / `rutaId` + `puntoId`, `orden` | 
+| `rutas` / `ruta_puntos` | Recorridos turísticos sugeridos | `id`, `nombre`, `descripcion` / `rutaId` + `puntoId`, `orden` |
 
-## 6. Arquitectura del Proyecto (MVVM)
+## 11. Arquitectura del Proyecto (MVVM)
 
 ```
-UI (Jetpack Compose)  ──observa──►  ViewModel (StateFlow)  ──consume──►  Repositorios  ──consulta──►  DAO (Room / SQLite)
+UI (Jetpack Compose)  ──observa──►  ViewModel (StateFlow)  ──consume──►  Repositorios  ──┬──►  DAO (Room / SQLite)  [base local, funciona sin red]
+                                                                                    ├──►  Retrofit → microservicios Spring Boot (8081 / 8082)
+                                                                                    └──►  Retrofit → APIs externas (Open-Meteo, JSONPlaceholder)
 
 ```
 
@@ -126,7 +208,8 @@ app/src/main/java/com/example/aprendoiasantiago/
 ├── AprendoApp.kt / AppContainer.kt     Inyección manual de dependencias e instancia única de BD y Repositorios
 ├── MainActivity.kt                     Punto de entrada y permisos de tiempo de ejecución
 ├── data/local/                         Room: Entidades, DAOs, AppDatabase, Migraciones, DatosEjemplo y SembradoInicial
-├── data/repository/                    AuthRepository, JuegoRepository y SesionRepository
+├── data/repository/                    Auth, Perfil, Juego, Notificaciones, Sesion + ServidorRepository (microservicios), ClimaRepository y PostRepository (APIs externas)
+├── data/remote/                        Retrofit: MicroserviciosApi (usuarios y contenido), ClimaApi (Open-Meteo), ApiService (JSONPlaceholder)
 ├── domain/                             Reglas de negocio puras (validadores de login, rostros, avance y rutas)
 ├── ml/                                 Detector de rostros con Google ML Kit
 ├── ubicacion/                          Proveedor de coordenadas GPS
@@ -142,23 +225,17 @@ app/src/main/java/com/example/aprendoiasantiago/
 
 ```
 
-## 7. Cumplimiento de Requerimientos (Estado Final)
+## 12. Cumplimiento de la Evaluación Parcial 4
 
-| Requerimiento de Evaluación | Estado | Implementación | 
-| ----- | ----- | ----- | 
-| Base de datos local SQLite (Room) con persistencia real | ✅ **Completado** | 6 tablas relacionales, DAOs asíncronos, migraciones y sembrado inicial. | 
-| Multi-perfil de clientes en el mismo teléfono | ✅ **Completado** | Selector de perfiles e historial independiente por `usuarioId`. | 
-| Cuentas en duro: `Admin` (`123`) y `GenCont` (`123`) | ✅ **Completado** | Sembradas automáticamente y enrutadas a sus paneles exclusivos. | 
-| Panel de Administrador y Panel de Creador de Contenido | ✅ **Completado** | `AdminScreen` (3 pestañas CRUD) y `GenContScreen` conectados a Room. | 
-| Mapa de Santiago georreferenciado y rutas | ✅ **Completado** | `osmdroid` con marcadores dinámicos desde SQLite y cálculo de avance. | 
-| Escaneo de QR con cámara y validación anti-duplicados | ✅ **Completado** | CameraX + ML Kit Barcode Scanning + entrada manual de respaldo. | 
-| Reproducción nativa de cápsulas de video (`.mp4`) | ✅ **Completado** | `Media3 ExoPlayer` con video alojado en el repositorio y permisos de red. | 
-| Evidencia fotográfica (Selfie validada con IA + Entorno) | ✅ **Completado** | Detección de rostro único en tiempo real con ML Kit Face Detection. | 
-| Colección de descubrimientos, progreso y ranking | ✅ **Completado** | Pantallas reactivas sincronizadas mediante `Flow` y `StateFlow`. | 
-| Notificaciones Push y Backend Centralizado (Spring Boot) | ⏭️ **Etapa 3** | Postergado oficialmente por indicación docente para la Evaluación 3. | 
+| Requisito | Estado | Dónde está |
+| ----- | ----- | ----- |
+| Interfaz completa y funcional | ✅ | `ui/` · navegación en `navigation/AppNavigation.kt` |
+| Microservicios Spring Boot con BD y endpoints | ✅ código · ⏳ ejecutar y capturar | `microservicios/` |
+| App integrada con CRUD en tiempo real | ✅ código · ⏳ probar con los servicios arriba | `data/remote/MicroserviciosApi.kt`, `ServidorRepository`, Admin/GenCont |
+| API externa con Retrofit visible en la UI | ✅ | Clima (Detalle del punto) y Novedades |
+| Pruebas unitarias ≥ 80 % de la lógica | ✅ escritas · ⏳ medir % | `app/src/test`, `docs/PRUEBAS_Y_COBERTURA.md` |
+| APK firmado + `.jks` en el repositorio | 🔶 configuración lista · ⏳ generar | `GUIA_APK_FIRMADO.md`, `app/build.gradle.kts` |
+| GitHub + Trello con trabajo por integrante | 👤 equipo | `docs/capturas/LEEME.md` |
 
-## 8. Equipo de Desarrollo
-
-* **Jordy:** Diseño e implementación de base de datos Room (entidades, DAOs, migraciones), repositorios base, lógica de dominio, servicios de GPS/ML Kit y pruebas unitarias.
-
-* **Alejandro:** Diseño de interfaz en Jetpack Compose, flujos de navegación por roles, implementación completa de los paneles de **Administrador (`AdminScreen`)** y **Creador de Contenido (`GenContScreen`)**, integración multimedia (`ExoPlayer` + video `.mp4`), configuración y pruebas de hardware (cámara QR, selfie y despliegue en emulador API 35).
+**Trello:** tablero con listas *Por hacer / En curso / Finalizado*, tarjetas por tarea asignadas a cada integrante y enlace aquí: `(pegar enlace)`.
+**GitHub:** repositorio público con acceso al docente; commits de cada integrante tanto en la app como en `microservicios/`.

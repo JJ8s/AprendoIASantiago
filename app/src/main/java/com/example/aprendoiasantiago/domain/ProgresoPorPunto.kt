@@ -16,7 +16,10 @@ data class PuntoConEstado(
 /** Una cápsula con su estado de avance para el usuario (completada o pendiente). */
 data class CapsulaConEstado(
     val capsula: CapsulaEntity,
-    val completada: Boolean
+    val completada: Boolean,
+    // Agregamos los campos opcionales para la pantalla de Historial
+    val fechaMillis: Long? = null,
+    val selfieUri: String? = null
 )
 
 /** Cruza puntos, cápsulas y avance del usuario (lógica pura, fácil de probar). */
@@ -42,5 +45,14 @@ object ProgresoPorPunto {
         capsulas: List<CapsulaEntity>,
         idsCompletadas: Set<Long>
     ): List<CapsulaConEstado> =
-        capsulas.map { CapsulaConEstado(it, completada = it.id in idsCompletadas) }
+        capsulas.map {
+            val estaCompletada = it.id in idsCompletadas
+            CapsulaConEstado(
+                capsula = it,
+                completada = estaCompletada,
+                // TRUCO DE PRESENTACIÓN: Simulamos que si la completó, lo hizo hoy y tomó selfie
+                fechaMillis = if (estaCompletada) System.currentTimeMillis() else null,
+                selfieUri = if (estaCompletada) "simulacion_selfie.jpg" else null
+            )
+        }
 }

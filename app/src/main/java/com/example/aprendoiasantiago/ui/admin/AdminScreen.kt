@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -31,6 +32,9 @@ fun AdminScreen(
     onGuardarCapsula: (CapsulaEntity) -> Unit,
     onEliminarCapsula: (Long) -> Unit,
     onCerrarSesion: () -> Unit,
+    /** Mensaje del servidor (sin conexión, QR repetido…); se muestra una vez y luego se descarta. */
+    aviso: String? = null,
+    onAvisoVisto: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var tabActual by remember { mutableStateOf(0) }
@@ -38,8 +42,20 @@ fun AdminScreen(
 
     var mostrarDialogoPunto by remember { mutableStateOf(false) }
     var mostrarDialogoCapsula by remember { mutableStateOf(false) }
+    // null = el diálogo crea; con valor = el diálogo edita ese elemento (el "Update" del CRUD)
+    var puntoEnEdicion by remember { mutableStateOf<PuntoTuristicoEntity?>(null) }
+    var capsulaEnEdicion by remember { mutableStateOf<CapsulaEntity?>(null) }
+
+    val snackbar = remember { SnackbarHostState() }
+    LaunchedEffect(aviso) {
+        if (aviso != null) {
+            snackbar.showSnackbar(aviso)
+            onAvisoVisto()
+        }
+    }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbar) },
         topBar = {
             TopAppBar(
                 title = { Text("Panel de Administración", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold) },
@@ -53,11 +69,11 @@ fun AdminScreen(
         floatingActionButton = {
             // Mostrar botón flotante solo en Puntos (1) y Cápsulas (2)
             if (tabActual == 1) {
-                FloatingActionButton(onClick = { mostrarDialogoPunto = true }) {
+                FloatingActionButton(onClick = { puntoEnEdicion = null; mostrarDialogoPunto = true }) {
                     Icon(Icons.Filled.Add, contentDescription = "Nuevo Punto")
                 }
             } else if (tabActual == 2) {
-                FloatingActionButton(onClick = { mostrarDialogoCapsula = true }) {
+                FloatingActionButton(onClick = { capsulaEnEdicion = null; mostrarDialogoCapsula = true }) {
                     Icon(Icons.Filled.Add, contentDescription = "Nueva Cápsula")
                 }
             }
@@ -79,32 +95,28 @@ fun AdminScreen(
             Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
                 when (tabActual) {
                     0 -> PestañaJugadores(usuarios, onEliminarUsuario)
-                    1 -> PestañaPuntos(puntos, onEliminarPunto)
-                    2 -> PestañaCapsulas(capsulas, onEliminarCapsula)
+                    1 -> PestañaPuntos(puntos, onEliminarPunto) { puntoEnEdicion = it; mostrarDialogoPunto = true }
+                    2 -> PestañaCapsulas(capsulas, onEliminarCapsula) { capsulaEnEdicion = it; mostrarDialogoCapsula = true }
                 }
             }
         }
     }
 
-    // --- CUADROS DE DIÁLOGO PARA CREAR ---
+    // --- CUADROS DE DIÁLOGO PARA CREAR / EDITAR ---
     if (mostrarDialogoPunto) {
-        DialogoCrearPunto(
+        DialogoPunto(
+            inicial = puntoEnEdicion,
             onDismiss = { mostrarDialogoPunto = false },
-            onGuardar = { nombre, desc ->
-                onGuardarPunto(PuntoTuristicoEntity(nombre = nombre, descripcion = desc, latitud = -33.4, longitud = -70.6, altitud = 500.0))
-                mostrarDialogoPunto = false
-            }
+            onGuardar = { onGuardarPunto(it); mostrarDialogoPunto = false }
         )
     }
 
     if (mostrarDialogoCapsula) {
-        DialogoCrearCapsula(
+        DialogoCapsula(
+            inicial = capsulaEnEdicion,
             puntos = puntos,
             onDismiss = { mostrarDialogoCapsula = false },
-            onGuardar = { titulo, url, qr, puntoId, pts ->
-                onGuardarCapsula(CapsulaEntity(puntoId = puntoId, titulo = titulo, urlVideo = url, codigoQr = qr, puntos = pts))
-                mostrarDialogoCapsula = false
-            }
+            onGuardar = { onGuardarCapsula(it); mostrarDialogoCapsula = false }
         )
     }
 }
@@ -140,7 +152,7 @@ private fun PestañaJugadores(usuarios: List<UsuarioEntity>, onEliminarUsuario: 
 }
 
 @Composable
-private fun PestañaPuntos(puntos: List<PuntoTuristicoEntity>, onEliminarPunto: (Long) -> Unit) {
+private fun PestañaPuntos(puntos: List<PuntoTuristicoEntity>, onEliminarPunto: (Long) -> Unit, onEditar: (PuntoTuristicoEntity) -> Unit) {
     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         items(puntos) { punto ->
             Card(modifier = Modifier.fillMaxWidth(), elevation = CardDefaults.cardElevation(2.dp)) {
@@ -153,6 +165,7 @@ private fun PestañaPuntos(puntos: List<PuntoTuristicoEntity>, onEliminarPunto: 
                         Text(punto.nombre, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
                         Text(punto.descripcion, style = MaterialTheme.typography.bodySmall, maxLines = 2)
                     }
+                    IconButton(onClick = { onEditar(punto) }) { Icon(Icons.Filled.Edit, "Editar") }
                     IconButton(onClick = { onEliminarPunto(punto.id) }) { Icon(Icons.Filled.Delete, "Eliminar", tint = MaterialTheme.colorScheme.error) }
                 }
             }
@@ -161,7 +174,7 @@ private fun PestañaPuntos(puntos: List<PuntoTuristicoEntity>, onEliminarPunto: 
 }
 
 @Composable
-private fun PestañaCapsulas(capsulas: List<CapsulaEntity>, onEliminarCapsula: (Long) -> Unit) {
+private fun PestañaCapsulas(capsulas: List<CapsulaEntity>, onEliminarCapsula: (Long) -> Unit, onEditar: (CapsulaEntity) -> Unit) {
     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         items(capsulas) { capsula ->
             Card(modifier = Modifier.fillMaxWidth(), elevation = CardDefaults.cardElevation(2.dp)) {
@@ -174,52 +187,10 @@ private fun PestañaCapsulas(capsulas: List<CapsulaEntity>, onEliminarCapsula: (
                         Text(capsula.titulo, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
                         Text("QR: ${capsula.codigoQr} • ${capsula.puntos} pts", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
                     }
+                    IconButton(onClick = { onEditar(capsula) }) { Icon(Icons.Filled.Edit, "Editar") }
                     IconButton(onClick = { onEliminarCapsula(capsula.id) }) { Icon(Icons.Filled.Delete, "Eliminar", tint = MaterialTheme.colorScheme.error) }
                 }
             }
         }
     }
-}
-
-// =========================================================================================
-// CUADROS DE DIÁLOGO PARA FORMULARIOS
-// =========================================================================================
-
-@Composable
-private fun DialogoCrearPunto(onDismiss: () -> Unit, onGuardar: (String, String) -> Unit) {
-    var nombre by remember { mutableStateOf("") }
-    var desc by remember { mutableStateOf("") }
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Nuevo Punto Turístico") },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(value = nombre, onValueChange = { nombre = it }, label = { Text("Nombre (ej: Cerro San Cristóbal)") })
-                OutlinedTextField(value = desc, onValueChange = { desc = it }, label = { Text("Descripción") })
-            }
-        },
-        confirmButton = { Button(onClick = { onGuardar(nombre, desc) }) { Text("Guardar") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancelar") } }
-    )
-}
-
-@Composable
-private fun DialogoCrearCapsula(puntos: List<PuntoTuristicoEntity>, onDismiss: () -> Unit, onGuardar: (String, String, String, Long, Int) -> Unit) {
-    var titulo by remember { mutableStateOf("") }
-    var qr by remember { mutableStateOf("") }
-    val puntoSeleccionado = if (puntos.isNotEmpty()) puntos.first().id else 1L
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Nueva Cápsula IA") },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(value = titulo, onValueChange = { titulo = it }, label = { Text("Título del Video") })
-                OutlinedTextField(value = qr, onValueChange = { qr = it }, label = { Text("Código QR (ej: AIJS-008)") })
-                Text("Video por defecto y 10 pts asignados automáticamente.", style = MaterialTheme.typography.labelSmall)
-            }
-        },
-        confirmButton = { Button(onClick = { onGuardar(titulo, DatosEjemplo.VIDEO_PRUEBA, qr, puntoSeleccionado, 10) }) { Text("Guardar") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancelar") } }
-    )
 }

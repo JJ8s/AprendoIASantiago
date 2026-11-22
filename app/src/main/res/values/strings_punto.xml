@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="punto_titulo">Detalle del punto</string>
+    <string name="punto_no_encontrado">No se encontró este punto. Puede haber sido eliminado.</string>
+    <string name="punto_estado_completado">Completado · %1$d de %2$d cápsulas</string>
+    <string name="punto_estado_pendiente">Pendiente · %1$d de %2$d cápsulas</string>
+    <string name="punto_seccion_info">Sobre este lugar</string>
+    <string name="punto_distancia">Distancia aproximada</string>
+    <string name="punto_distancia_no_disponible">No disponible</string>
+    <string name="punto_coordenadas">Coordenadas</string>
+    <string name="punto_coordenadas_valor">%1$.4f, %2$.4f</string>
+    <string name="punto_seccion_capsulas">Contenido de este punto</string>
+    <string name="punto_nota_pendiente">Escanea el código QR en el lugar para desbloquear el video y ganar los puntos.</string>
+    <string name="punto_sin_capsulas">Este punto aún no tiene cápsulas.</string>
+    <string name="punto_capsula_bloqueada">Cápsula por descubrir</string>
+    <string name="punto_puntos_cap">%1$d pts</string>
+    <string name="punto_seccion_puntos">Puntos</string>
+    <string name="punto_puntos_obtenidos">Puntos obtenidos</string>
+    <string name="punto_puntos_valor">%1$d de %2$d</string>
+    <string name="punto_ir_escaner">Ir al escáner QR</string>
+    <string name="punto_ver_mapa">Ver en mapa</string>
+</resources>

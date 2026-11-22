@@ -14,7 +14,12 @@ class ViewModelFactory(private val contenedor: AppContainer) : ViewModelProvider
         modelClass.isAssignableFrom(MapaViewModel::class.java) ->
             MapaViewModel(contenedor.juego, contenedor.sesion)
         modelClass.isAssignableFrom(EscanerViewModel::class.java) ->
-            EscanerViewModel(contenedor.juego, contenedor.sesion, contenedor.ubicacion)
+            EscanerViewModel(
+                contenedor.juego,
+                contenedor.sesion,
+                contenedor.ubicacion,
+                contenedor.notificaciones
+            )
         modelClass.isAssignableFrom(EvidenciaViewModel::class.java) ->
             EvidenciaViewModel(
                 contenedor.juego,
@@ -27,13 +32,29 @@ class ViewModelFactory(private val contenedor: AppContainer) : ViewModelProvider
         modelClass.isAssignableFrom(PerfilViewModel::class.java) ->
             PerfilViewModel(contenedor.juego, contenedor.sesion)
 
+        modelClass.isAssignableFrom(PuntoDetalleViewModel::class.java) ->
+            PuntoDetalleViewModel(contenedor.juego, contenedor.sesion, contenedor.ubicacion)
+        modelClass.isAssignableFrom(AjustesPerfilViewModel::class.java) ->
+            AjustesPerfilViewModel(
+                contenedor.perfil,
+                contenedor.notificaciones,
+                contenedor.sesion,
+                contenedor.almacenAvatares
+            )
+
+        modelClass.isAssignableFrom(ClimaViewModel::class.java) ->
+            ClimaViewModel(contenedor.clima)
+
+        modelClass.isAssignableFrom(PostViewModel::class.java) ->
+            PostViewModel(contenedor.posts)
+
         // --- PANEL DE ADMINISTRADOR ---
         modelClass.isAssignableFrom(AdminViewModel::class.java) ->
-            AdminViewModel(contenedor.auth, contenedor.juego, contenedor.sesion)
+            AdminViewModel(contenedor.auth, contenedor.juego, contenedor.sesion, contenedor.servidor)
 
         // --- PANEL DE CREADOR DE CONTENIDO ---
         modelClass.isAssignableFrom(GenContViewModel::class.java) ->
-            GenContViewModel(contenedor.juego, contenedor.sesion)
+            GenContViewModel(contenedor.juego, contenedor.sesion, contenedor.servidor)
 
         else -> throw IllegalArgumentException("ViewModel desconocido: ${modelClass.name}")
     } as T

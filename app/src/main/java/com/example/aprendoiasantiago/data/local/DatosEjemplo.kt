@@ -5,17 +5,12 @@ import com.example.aprendoiasantiago.data.model.PuntoTuristicoEntity
 import com.example.aprendoiasantiago.data.model.CapsulaEntity
 import com.example.aprendoiasantiago.data.model.RutaEntity
 import com.example.aprendoiasantiago.data.model.RutaPuntoEntity
-
 import com.example.aprendoiasantiago.utils.Hash
 
 /**
  * Datos ficticios para poblar la base local (regla del caso: solo datos sintéticos).
- * Las coordenadas y altitudes son aproximadas: reemplázalas por el listado oficial que entrega el caso.
- * Todas las cápsulas apuntan a un mismo video de muestra: reemplaza [VIDEO_PRUEBA] (o cada urlVideo)
- * por los enlaces de los videos piloto que entrega el caso.
  */
 object DatosEjemplo {
-
 
     const val USUARIO_DEMO = "demo"
     const val CLAVE_DEMO = "demo1234"
@@ -26,8 +21,8 @@ object DatosEjemplo {
     const val USUARIO_CREADOR = "GenCont"
     const val CLAVE_CREADOR = "123"
 
-    /** Video público de muestra (Big Buck Bunny) para probar el reproductor. */
-    const val VIDEO_PRUEBA = "https://github.com/JJ8s/AprendoIASantiago/raw/refs/heads/Brain_Alejandro/Video_ia.mp4.mp4"
+    // NUEVO: Ruta local al video que acabas de guardar en la carpeta res/raw/
+    const val VIDEO_PRUEBA = "android.resource://com.example.aprendoiasantiago/raw/capsula_educacion"
 
     val puntos: List<PuntoTuristicoEntity> = listOf(
         PuntoTuristicoEntity(

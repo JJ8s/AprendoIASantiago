@@ -13,3 +13,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Firma de la app (Guía 3.3.1): nunca subir contraseñas. La Evaluación Parcial 4 exige dejar el .jks en entrega/ (excepción abajo).
+keystore.properties
+*.jks
+*.keystore
+!entrega/*.jks
