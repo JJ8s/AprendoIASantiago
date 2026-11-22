@@ -8,7 +8,11 @@ import com.example.aprendoiasantiago.utils.Hash
 import kotlinx.coroutines.flow.Flow
 
 /** Lee y modifica los datos de perfil y configuración del jugador (todo persiste en SQLite). */
-class PerfilRepository(private val usuarioDao: UsuarioDao) {
+class PerfilRepository(
+    private val usuarioDao: UsuarioDao,
+    /** Microservicios (opcional): el perfil y la clave también se actualizan allá, en segundo plano. */
+    private val servidor: ServidorRepository? = null
+) {
 
     fun usuario(id: Long): Flow<UsuarioEntity?> = usuarioDao.observarPorId(id)
 
@@ -16,6 +20,9 @@ class PerfilRepository(private val usuarioDao: UsuarioDao) {
     suspend fun guardarDatos(id: Long, nombre: String, correo: String, telefono: String): ErrorPerfil? {
         ValidadorPerfil.validarDatos(nombre, correo, telefono)?.let { return it }
         usuarioDao.actualizarDatos(id, nombre.trim(), correo.trim(), telefono.trim())
+        servidor?.let { s ->
+            usuarioDao.buscarPorId(id)?.let { s.notificarPerfil(it.nombreUsuario, nombre.trim(), correo.trim(), telefono.trim()) }
+        }
         return null
     }
 
@@ -25,6 +32,7 @@ class PerfilRepository(private val usuarioDao: UsuarioDao) {
         val usuario = usuarioDao.buscarPorId(id) ?: return ErrorPerfil.ERROR_INESPERADO
         if (usuario.claveHash != Hash.sha256(actual)) return ErrorPerfil.CLAVE_ACTUAL_INCORRECTA
         usuarioDao.actualizarClave(id, Hash.sha256(nueva))
+        servidor?.notificarClave(usuario.nombreUsuario, actual, nueva)
         return null
     }
 

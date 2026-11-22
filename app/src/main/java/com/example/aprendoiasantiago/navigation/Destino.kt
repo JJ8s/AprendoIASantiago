@@ -36,6 +36,7 @@ const val RUTA_PERFIL_EDITAR = "perfil/editar"
 const val RUTA_PERFIL_NOTIFICACIONES = "perfil/notificaciones"
 const val RUTA_PERFIL_PERMISOS = "perfil/permisos"
 const val RUTA_PERFIL_AYUDA = "perfil/ayuda"
+const val RUTA_POSTS = "perfil/ayuda/novedades"
 
 /** Pestañas de la barra inferior: cada una reúne su ruta, su título y su ícono en un solo lugar. */
 enum class Destino(

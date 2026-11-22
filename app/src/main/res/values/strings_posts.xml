@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="posts_titulo">Novedades (API REST)</string>
+    <string name="posts_campo_titulo">Título</string>
+    <string name="posts_campo_cuerpo">Texto</string>
+    <string name="posts_crear">Publicar (POST)</string>
+    <string name="posts_guardar_put">Guardar cambios (PUT)</string>
+    <string name="posts_guardar_patch">Cambiar solo el título (PATCH)</string>
+    <string name="posts_cancelar">Cancelar edición</string>
+    <string name="posts_editar">Editar publicación</string>
+    <string name="posts_eliminar">Eliminar publicación</string>
+    <string name="posts_reintentar">Reintentar</string>
+    <string name="posts_error_conexion">Sin conexión a internet. El juego sigue funcionando sin red.</string>
+    <string name="posts_error_vacio">Escribe un título y un texto.</string>
+    <string name="posts_error_servidor">El servidor no respondió como se esperaba. Intenta de nuevo.</string>
+    <string name="ayuda_novedades">Novedades de la comunidad</string>
+</resources>

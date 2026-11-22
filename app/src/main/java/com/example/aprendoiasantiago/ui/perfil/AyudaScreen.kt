@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Public
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,7 +30,7 @@ const val CORREO_SOPORTE = "soporte@aprendoia-santiago.example"
 
 /** Ayuda y soporte: preguntas frecuentes y un botón que abre la app de correo ya redactada. */
 @Composable
-fun AyudaScreen(onVolver: () -> Unit, modifier: Modifier = Modifier) {
+fun AyudaScreen(onVolver: () -> Unit, onNovedades: () -> Unit, modifier: Modifier = Modifier) {
     val contexto = LocalContext.current
     var sinApp by remember { mutableStateOf(false) }
     val asunto = stringResource(R.string.ayuda_correo_asunto)
@@ -71,6 +72,16 @@ fun AyudaScreen(onVolver: () -> Unit, modifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.padding(start = 16.dp, top = 8.dp)
+            )
+        }
+
+        SeccionIos {
+            FilaIos(
+                titulo = stringResource(R.string.ayuda_novedades),
+                icono = Icons.Filled.Public,
+                colorIcono = IosAzul,
+                conFlecha = true,
+                onClick = onNovedades
             )
         }
 

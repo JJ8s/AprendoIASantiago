@@ -150,6 +150,27 @@ class JuegoRepositoryTest {
     }
 
     @Test
+    fun selfie_sumaLaBonificacionUnaSolaVez() = runBlocking {
+        val capsula = DatosEjemplo.capsulas.first()
+        repositorio.procesarCodigo(usuarioId, capsula.codigoQr)
+
+        val primera = repositorio.guardarSelfie(usuarioId, capsula.id, "file:///selfie1.jpg")
+        val segunda = repositorio.guardarSelfie(usuarioId, capsula.id, "file:///selfie2.jpg")
+
+        assertEquals(JuegoRepository.BONUS_SELFIE, primera)
+        assertEquals(0, segunda)
+        assertEquals(capsula.puntos + JuegoRepository.BONUS_SELFIE, progreso.puntaje(usuarioId))
+    }
+
+    @Test
+    fun selfie_sinCapsulaCompletada_noSumaNada() = runBlocking {
+        val sumados = repositorio.guardarSelfie(usuarioId, DatosEjemplo.capsulas.first().id, "file:///selfie.jpg")
+
+        assertEquals(0, sumados)
+        assertEquals(0, progreso.puntaje(usuarioId))
+    }
+
+    @Test
     fun capsulaSinCompletar_noTieneProgreso() = runBlocking {
         assertEquals(null, repositorio.progreso(usuarioId, DatosEjemplo.capsulas.first().id))
     }
@@ -175,6 +196,8 @@ private class DaoCapsulaFalso : CapsulaDao {
         capsulas.firstOrNull { it.codigoQr.equals(codigo, ignoreCase = true) }
 
     override suspend fun guardarTodas(capsulas: List<CapsulaEntity>) = Unit
+    override suspend fun guardarCapsula(capsula: CapsulaEntity) = Unit
+    override suspend fun eliminarCapsula(id: Long) = Unit
 }
 
 private class DaoPuntoFalso : PuntoDao {
@@ -183,6 +206,8 @@ private class DaoPuntoFalso : PuntoDao {
     override fun observarTodos(): Flow<List<PuntoTuristicoEntity>> = flowOf(puntos)
     override suspend fun buscarPorId(id: Long): PuntoTuristicoEntity? = puntos.firstOrNull { it.id == id }
     override suspend fun guardarTodos(puntos: List<PuntoTuristicoEntity>) = Unit
+    override suspend fun guardarPunto(punto: PuntoTuristicoEntity) = Unit
+    override suspend fun eliminarPunto(id: Long) = Unit
 }
 
 private class DaoUsuarioFalso : UsuarioDao {
@@ -193,6 +218,18 @@ private class DaoUsuarioFalso : UsuarioDao {
     override fun observarPerfilesActivos(): Flow<List<UsuarioEntity>> = flowOf(emptyList())
     override suspend fun insertarTodos(usuarios: List<UsuarioEntity>) = Unit
     override suspend fun insertarJugador(usuario: UsuarioEntity): Long = -1L
+    override suspend fun eliminarPorId(id: Long) = Unit
+    override suspend fun buscarPorId(id: Long): UsuarioEntity? = null
+    override suspend fun actualizarDatos(id: Long, nombre: String, correo: String, telefono: String) = Unit
+    override suspend fun actualizarClave(id: Long, claveHash: String) = Unit
+    override suspend fun actualizarAvatarIndice(id: Long, indice: Int) = Unit
+    override suspend fun actualizarAvatarUri(id: Long, uri: String?) = Unit
+    override suspend fun actualizarNotificaciones(
+        id: Long, recordatorios: Boolean, nuevosPuntos: Boolean, logros: Boolean
+    ) = Unit
+    override suspend fun actualizarPermisos(id: Long, ubicacion: Boolean, camara: Boolean) = Unit
+    override suspend fun buscarPorAlias(alias: String): UsuarioEntity? = null
+    override suspend fun actualizarPuntaje(id: Long, puntaje: Int) = Unit
 }
 
 private class DaoRutaFalso : RutaDao {

@@ -42,13 +42,19 @@ class ViewModelFactory(private val contenedor: AppContainer) : ViewModelProvider
                 contenedor.almacenAvatares
             )
 
+        modelClass.isAssignableFrom(ClimaViewModel::class.java) ->
+            ClimaViewModel(contenedor.clima)
+
+        modelClass.isAssignableFrom(PostViewModel::class.java) ->
+            PostViewModel(contenedor.posts)
+
         // --- PANEL DE ADMINISTRADOR ---
         modelClass.isAssignableFrom(AdminViewModel::class.java) ->
-            AdminViewModel(contenedor.auth, contenedor.juego, contenedor.sesion)
+            AdminViewModel(contenedor.auth, contenedor.juego, contenedor.sesion, contenedor.servidor, contenedor.perfil)
 
         // --- PANEL DE CREADOR DE CONTENIDO ---
         modelClass.isAssignableFrom(GenContViewModel::class.java) ->
-            GenContViewModel(contenedor.juego, contenedor.sesion)
+            GenContViewModel(contenedor.juego, contenedor.sesion, contenedor.servidor)
 
         else -> throw IllegalArgumentException("ViewModel desconocido: ${modelClass.name}")
     } as T
