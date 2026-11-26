@@ -22,7 +22,7 @@ spring:
     activate:
       on-profile: mysql
   datasource:
-    url: jdbc:mysql://${DB_HOST:localhost}:3306/usuarios_db?createDatabaseIfNotExist=true
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/usuarios_db?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true
     username: ${DB_USER:root}
     password: ${DB_PASSWORD:root}
   h2:
