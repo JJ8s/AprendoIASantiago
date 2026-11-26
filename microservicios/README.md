@@ -41,3 +41,10 @@ cd microservicios/contenido-service && mvn spring-boot:run
 
 Los errores devuelven `{"estado":404,"mensaje":"..."}`. Las claves se guardan con BCrypt y nunca se devuelven.
 Cuentas sintéticas creadas al iniciar: `Admin/123`, `GenCont/123`, `demo/demo1234`.
+
+## Docker (opcional)
+
+- Solo MySQL: `docker compose up -d` y arrancar cada servicio con `--spring.profiles.active=mysql`.
+- Todo en contenedores: `docker compose --profile completo up -d --build` (MySQL + usuarios en 8081 + contenido en 8082).
+- Ver registros: `docker compose logs -f usuarios contenido` · Apagar: `docker compose --profile completo down` (con `-v` borra también los datos).
+- Guía completa: `docs/PASO_A_PASO_DOCKER.md`.

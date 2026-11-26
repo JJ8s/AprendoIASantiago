@@ -27,7 +27,7 @@ Cuentas de prueba: `Admin/123`, `GenCont/123`, `demo/demo1234`.
 4. Ver las bases: `http://localhost:8081/h2-console` (JDBC `jdbc:h2:file:./data/usuarios`, usuario `sa`, clave vacía); igual en 8082 con `./data/contenido`.
 5. 📸 `microservicios.png`: las dos terminales corriendo + el JSON en el navegador.
 6. Dejar ambas terminales abiertas durante las pruebas del paso 4.
-7. (Opcional) MySQL: `docker compose up -d` en `microservicios/` y arrancar con `-Dspring-boot.run.arguments=--spring.profiles.active=mysql`.
+7. (Opcional) Con Docker: ver `docs/PASO_A_PASO_DOCKER.md`.
 
 ## 4. Probar la app conectada (checklist de la demostración)
 Con los servicios arriba, ejecutar la app en el emulador (usa `10.0.2.2` automáticamente).

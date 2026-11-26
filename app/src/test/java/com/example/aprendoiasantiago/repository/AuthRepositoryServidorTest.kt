@@ -12,6 +12,8 @@ import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import com.example.aprendoiasantiago.data.repository.ServidorNoDisponibleException
+import io.kotest.assertions.throwables.shouldThrow
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.test.runTest
 
@@ -96,6 +98,50 @@ class AuthRepositoryServidorTest : StringSpec({
             coEvery { e.dao.buscarPorCredenciales("ana", hash) } returns local
 
             e.repo.registrarJugador("Ana", "ana", "clave1") shouldBe local
+        }
+    }
+
+    "modo estricto: sin conexión NO deja iniciar sesión, aunque el usuario exista en el teléfono" {
+        runTest {
+            val e = Entorno()
+            val estricto = AuthRepository(e.dao, CompletableDeferred(Unit), e.servidor, estricto = true)
+            coEvery { e.servidor.iniciarSesion(any(), any()) } returns Respuesta.Fallo(TipoFallo.SIN_CONEXION)
+            coEvery { e.dao.buscarPorCredenciales("ana", hash) } returns local
+
+            shouldThrow<ServidorNoDisponibleException> { estricto.iniciarSesion("ana", "clave1") }
+            coVerify(exactly = 0) { e.dao.buscarPorCredenciales(any(), any()) }
+        }
+    }
+
+    "modo estricto: una clave incorrecta rechazada por el servidor devuelve null, no una falla de red" {
+        runTest {
+            val e = Entorno()
+            val estricto = AuthRepository(e.dao, CompletableDeferred(Unit), e.servidor, estricto = true)
+            coEvery { e.servidor.iniciarSesion(any(), any()) } returns Respuesta.Fallo(TipoFallo.NO_AUTORIZADO)
+
+            estricto.iniciarSesion("ana", "mala").shouldBeNull()
+        }
+    }
+
+    "modo estricto: con red inicia sesión normalmente" {
+        runTest {
+            val e = Entorno()
+            val estricto = AuthRepository(e.dao, CompletableDeferred(Unit), e.servidor, estricto = true)
+            coEvery { e.servidor.iniciarSesion("ana", "clave1") } returns Respuesta.Ok(remoto)
+            coEvery { e.dao.buscarPorAlias("ana") } returns local
+
+            estricto.iniciarSesion("ana", "clave1") shouldBe local
+        }
+    }
+
+    "modo estricto: registrar sin conexión no crea nada en el teléfono" {
+        runTest {
+            val e = Entorno()
+            val estricto = AuthRepository(e.dao, CompletableDeferred(Unit), e.servidor, estricto = true)
+            coEvery { e.servidor.registrar(any(), any(), any()) } returns Respuesta.Fallo(TipoFallo.SIN_CONEXION)
+
+            shouldThrow<ServidorNoDisponibleException> { estricto.registrarJugador("Ana", "ana", "clave1") }
+            coVerify(exactly = 0) { e.dao.insertarJugador(any()) }
         }
     }
 

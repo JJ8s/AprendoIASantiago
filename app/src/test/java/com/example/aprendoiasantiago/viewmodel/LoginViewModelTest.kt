@@ -2,6 +2,7 @@ package com.example.aprendoiasantiago.ui.viewmodels
 
 import com.example.aprendoiasantiago.data.model.UsuarioEntity
 import com.example.aprendoiasantiago.data.repository.AuthRepository
+import com.example.aprendoiasantiago.data.repository.ServidorNoDisponibleException
 import com.example.aprendoiasantiago.data.repository.SesionRepository
 import com.example.aprendoiasantiago.domain.ErrorLogin
 import com.example.aprendoiasantiago.util.pruebaConMain
@@ -72,6 +73,24 @@ class LoginViewModelTest : StringSpec({
             vm.iniciarSesion()
 
             vm.estado.value.error shouldBe ErrorLogin.CREDENCIALES_INCORRECTAS
+            vm.estado.value.autenticado shouldBe false
+            sesion.usuarioId.value shouldBe null
+        }
+    }
+
+    "si el servidor de usuarios no responde (modo estricto) muestra el aviso y no inicia sesión" {
+        pruebaConMain {
+            val auth = authSimulado()
+            coEvery { auth.iniciarSesion(any(), any()) } throws ServidorNoDisponibleException("caído")
+            val sesion = SesionRepository()
+            val vm = LoginViewModel(auth, sesion)
+            vm.onUsuarioCambia("demo")
+            vm.onClaveCambia("demo1234")
+
+            vm.iniciarSesion()
+
+            vm.estado.value.error shouldBe ErrorLogin.SERVIDOR_NO_DISPONIBLE
+            vm.estado.value.cargando shouldBe false
             vm.estado.value.autenticado shouldBe false
             sesion.usuarioId.value shouldBe null
         }

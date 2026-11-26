@@ -483,5 +483,6 @@ private fun ErrorLogin.textoMensaje(): String = when (this) {
     ErrorLogin.CLAVES_NO_COINCIDEN -> stringResource(R.string.error_claves_no_coinciden)
     ErrorLogin.CREDENCIALES_INCORRECTAS -> stringResource(R.string.error_credenciales)
     ErrorLogin.USUARIO_YA_EXISTE -> "Ese alias ya está registrado en este dispositivo"
+    ErrorLogin.SERVIDOR_NO_DISPONIBLE -> stringResource(R.string.error_servidor_no_disponible)
     ErrorLogin.ERROR_INESPERADO -> stringResource(R.string.error_inesperado)
 }

@@ -1,5 +1,12 @@
-# Opcional: MySQL real para ambos microservicios.
-# Uso: docker compose up -d   y luego arrancar cada servicio con --spring.profiles.active=mysql
+# DOS FORMAS DE USARLO (desde la carpeta microservicios/):
+#
+# 1) Solo MySQL (los servicios se corren con Maven y --spring.profiles.active=mysql):
+#      docker compose up -d
+#
+# 2) Todo en Docker (MySQL + usuarios-service en 8081 + contenido-service en 8082):
+#      docker compose --profile completo up -d --build
+#
+# La app Android no cambia: el emulador usa 10.0.2.2:8081 y 10.0.2.2:8082.
 services:
   mysql:
     image: mysql:8.4
@@ -10,5 +17,39 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  usuarios:
+    profiles: ["completo"]
+    build: ./usuarios-service
+    container_name: aprendoia-usuarios
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_PROFILES_ACTIVE: mysql
+      DB_HOST: mysql
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: on-failure
+
+  contenido:
+    profiles: ["completo"]
+    build: ./contenido-service
+    container_name: aprendoia-contenido
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_PROFILES_ACTIVE: mysql
+      DB_HOST: mysql
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: on-failure
+
 volumes:
   mysql_data:

@@ -9,12 +9,20 @@ import com.example.aprendoiasantiago.utils.Hash
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.flow.Flow
 
+/** Modo estricto: el microservicio de usuarios no respondió, así que no se permite iniciar sesión ni registrarse. */
+class ServidorNoDisponibleException(mensaje: String) : Exception(mensaje)
+
 class AuthRepository(
     private val usuarioDao: UsuarioDao,
     /** Termina cuando la base ya tiene sus datos iniciales. */
     private val sembradoListo: Deferred<Unit>,
     /** Microservicios (opcional): si es `null` o no responde, todo funciona solo con la base local. */
-    private val servidor: ServidorRepository? = null
+    private val servidor: ServidorRepository? = null,
+    /**
+     * Modo estricto (`-PmodoEstricto=true`): sin el microservicio de usuarios no hay login ni registro
+     * (no se usa la base local como respaldo). Con `false` la app sigue funcionando sin conexión.
+     */
+    private val estricto: Boolean = false
 ) {
     /** Observa en tiempo real todos los perfiles creados en el dispositivo (Pantalla 3). */
     fun observarPerfilesActivos(): Flow<List<UsuarioEntity>> =
@@ -27,6 +35,11 @@ class AuthRepository(
         // 1) Con red: el microservicio valida las credenciales y la app deja el perfil al día en Room.
         val remoto = servidor?.iniciarSesion(alias, clave)
         if (remoto is Respuesta.Ok) return espejarLocal(remoto.valor, clave)
+        if (estricto && remoto is Respuesta.Fallo) {
+            // Credenciales mal escritas (o usuario inexistente) = null; cualquier otra falla = servidor caído.
+            if (remoto.tipo == TipoFallo.NO_AUTORIZADO || remoto.tipo == TipoFallo.NO_ENCONTRADO) return null
+            throw ServidorNoDisponibleException("El servidor de usuarios no responde (${remoto.tipo})")
+        }
         // 2) Sin red (o usuario creado solo en este teléfono): se valida contra la base local.
         return usuarioDao.buscarPorCredenciales(nombreUsuario = alias, claveHash = Hash.sha256(clave))
     }
@@ -70,6 +83,9 @@ class AuthRepository(
         // Con red, el alias debe ser único en el servidor. Si no hay red, se registra solo en el teléfono.
         val remoto = servidor?.registrar(nombreLimpio, aliasLimpio, clave)
         if (remoto is Respuesta.Fallo && remoto.tipo == TipoFallo.CONFLICTO) return null
+        if (estricto && remoto is Respuesta.Fallo) {
+            throw ServidorNoDisponibleException("El servidor de usuarios no responde (${remoto.tipo})")
+        }
 
         val nuevoId = usuarioDao.insertarJugador(
             UsuarioEntity(
