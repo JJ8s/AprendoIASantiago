@@ -23,6 +23,7 @@
     <string name="error_clave_vacia">Escribe tu contraseña.</string>
     <string name="error_confirmacion_vacia">Repite tu contraseña para confirmarla.</string>
     <string name="error_claves_no_coinciden">Las contraseñas no coinciden.</string>
+    <string name="error_servidor_no_disponible">No hay conexión con el servidor de usuarios. Enciende el microservicio e inténtalo de nuevo.</string>
     <string name="error_credenciales">Usuario o contraseña incorrectos.</string>
     <string name="error_inesperado">Ocurrió un error inesperado. Intenta de nuevo.</string>
 

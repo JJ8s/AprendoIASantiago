@@ -9,6 +9,8 @@ enum class ErrorLogin {
     CLAVES_NO_COINCIDEN,
     CREDENCIALES_INCORRECTAS,
     USUARIO_YA_EXISTE,
+    /** Modo estricto: el microservicio de usuarios no responde y no se permite entrar sin él. */
+    SERVIDOR_NO_DISPONIBLE,
     ERROR_INESPERADO
 }
 

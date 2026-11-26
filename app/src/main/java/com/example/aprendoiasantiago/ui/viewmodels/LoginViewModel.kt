@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.aprendoiasantiago.data.model.UsuarioEntity
 import com.example.aprendoiasantiago.data.repository.AuthRepository
+import com.example.aprendoiasantiago.data.repository.ServidorNoDisponibleException
 import com.example.aprendoiasantiago.data.repository.SesionRepository
 import com.example.aprendoiasantiago.domain.ErrorLogin
 import com.example.aprendoiasantiago.domain.ValidadorLogin
@@ -111,6 +112,8 @@ class LoginViewModel(
                 }
             } catch (e: CancellationException) {
                 throw e
+            } catch (e: ServidorNoDisponibleException) {
+                _estado.update { it.copy(cargando = false, error = ErrorLogin.SERVIDOR_NO_DISPONIBLE) }
             } catch (e: Exception) {
                 _estado.update { it.copy(cargando = false, error = ErrorLogin.ERROR_INESPERADO) }
             }
@@ -151,6 +154,8 @@ class LoginViewModel(
                 }
             } catch (e: CancellationException) {
                 throw e
+            } catch (e: ServidorNoDisponibleException) {
+                _estado.update { it.copy(cargando = false, error = ErrorLogin.SERVIDOR_NO_DISPONIBLE) }
             } catch (e: Exception) {
                 _estado.update { it.copy(cargando = false, error = ErrorLogin.ERROR_INESPERADO) }
             }

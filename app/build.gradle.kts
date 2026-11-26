@@ -31,6 +31,11 @@ android {
         val urlContenido = (project.findProperty("urlContenido") as String?) ?: "http://10.0.2.2:8082/api/"
         buildConfigField("String", "URL_USUARIOS", "\"$urlUsuarios\"")
         buildConfigField("String", "URL_CONTENIDO", "\"$urlContenido\"")
+
+        // Modo estricto: sin el microservicio de usuarios la app NO permite iniciar sesión ni registrarse.
+        // ./gradlew assembleDebug -PmodoEstricto=true   (en esta versión el valor por defecto es true; con -PmodoEstricto=false la app vuelve a funcionar sin conexión)
+        val modoEstricto = (project.findProperty("modoEstricto") as String?) ?: "true"
+        buildConfigField("boolean", "MODO_ESTRICTO", modoEstricto.toBoolean().toString())
     }
 
     signingConfigs {

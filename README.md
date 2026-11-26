@@ -1,4 +1,4 @@
-# Aprendo IA Jugando en Santiago
+# Aprendo IA Jugando en Santiago  _(versión con modo estricto activado por defecto)_
 
 ## 1. Nombre del proyecto
 
@@ -265,3 +265,15 @@ app/src/main/java/com/example/aprendoiasantiago/
 
 **Trello:** tablero con listas *Por hacer / En curso / Finalizado*, tarjetas por tarea asignadas a cada integrante y enlace aquí: `(pegar enlace)`.
 **GitHub:** repositorio público con acceso al docente; commits de cada integrante tanto en la app como en `microservicios/`.
+
+
+## Modo estricto (sin microservicio de usuarios no hay login)
+
+Por defecto la app sigue funcionando sin conexión (usa Room como respaldo). Con el **modo estricto** el inicio de sesión
+y el registro dependen del microservicio de usuarios: si no responde, la app muestra
+*"No hay conexión con el servidor de usuarios. Enciende el microservicio e inténtalo de nuevo."* y no deja entrar.
+
+- Activarlo: `./gradlew assembleDebug -PmodoEstricto=true` (en Android Studio: agregar `modoEstricto=true` en `gradle.properties`).
+- Desactivarlo: quitar la línea o usar `-PmodoEstricto=false`.
+- Una clave incorrecta sigue mostrando "Usuario o contraseña incorrectos"; el aviso de servidor solo sale si el servicio no responde.
+- Con el servicio de usuarios arriba y sin red hacia el resto, el contenido (puntos y cápsulas) sigue leyéndose de la base local.

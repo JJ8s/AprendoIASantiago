@@ -43,7 +43,7 @@ class AppContainer(context: Context, appScope: CoroutineScope) {
         usuarioDao = db.usuarioDao(),
         alcance = appScope
     )
-    val auth = AuthRepository(db.usuarioDao(), sembradoListo, servidor)
+    val auth = AuthRepository(db.usuarioDao(), sembradoListo, servidor, BuildConfig.MODO_ESTRICTO)
     val almacenEvidencias = AlmacenEvidencias(File(context.filesDir, "evidencias"), GaleriaFotos.publicador(context))
     val detectorRostro: DetectorRostro = MlKitDetectorRostro()
     val almacenAvatares = AlmacenEvidencias(File(context.filesDir, "avatares"))
