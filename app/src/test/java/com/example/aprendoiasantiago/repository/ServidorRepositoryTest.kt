@@ -27,6 +27,8 @@ import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
 
+import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 /** Guía EP4: el puente con los microservicios se prueba con las APIs simuladas (sin red real). */
 class ServidorRepositoryTest : StringSpec({
 

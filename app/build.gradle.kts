@@ -119,6 +119,7 @@ dependencies {
     testImplementation(libs.kotest.assertions.core)        // Kotest: shouldBe, shouldContainExactly...
     testImplementation(libs.mockk)                         // MockK: simula DAOs, repositorios y ViewModels
     testImplementation(libs.kotlinx.coroutines.test)       // runTest y dispatchers de prueba
+    testImplementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     // Tests de interfaz (src/androidTest): Compose UI Test + JUnit 4
     androidTestImplementation(platform(libs.androidx.compose.bom))
